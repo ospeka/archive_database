@@ -32,6 +32,7 @@ def main():
         for el in l:
             print(el)
         print()
+    #git check :D
 
 
 def recsListByDay(recsList):
