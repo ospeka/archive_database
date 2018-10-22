@@ -24,15 +24,57 @@ def main():
     colIndexes = {colName: colNames.index(colName) for colName in needCols}
     data = content[7:]
     recordsList = linesToObjs(data, colIndexes)[::-1]
-    # for el in recordsList:
-    #     print(el)
     dataByDay = recsListByDay(recordsList)
     print("\nsepareted by days\n")
     for l in dataByDay:
         for el in l:
             print(el)
         print()
+    recountedRecs = recountPCP(dataByDay)
+    print("Recounted pcp(tR)")
+    for el in recountedRecs:
+        print(el)
 
+
+def recountPCP(dataByDay):
+    res = []
+    for day in dataByDay:
+        recountedDay = recountDay(day)
+        res.append(recountedDay)
+    return res
+
+def recountDay(day):
+    lastRecord = day[0]
+    for record in day:
+        if (record.RRR == "no data"):
+            continue
+        else:
+            lastRecord = record
+    # print("last record", lastRecord)
+    summPCP = countPCPSum(lastRecord, day)
+    # print("sum pcp", summPCP)
+    # if lastRecord.RRR == no data  ---->>> means to mark it as NO DATA or smth else
+    newRecord = Record(dt.date(year=lastRecord.date.year, month=lastRecord.date.month, day=lastRecord.date.day), summPCP, lastRecord.tR)
+    return newRecord
+
+def countPCPSum(lastRecord, day):
+    summPCP = 0
+    if lastRecord.date.hour == 21:
+        if lastRecord.RRR != "No precipitation":
+            summPCP += float(lastRecord.RRR)
+        for record in day:
+            if record.date.hour == 9 and record.RRR.isdigit():
+                summPCP += float(record.RRR)
+        return summPCP
+    elif lastRecord.date.hour == 18:
+        if lastRecord.RRR != "No precipitation":
+            summPCP += float(lastRecord.RRR)
+        for record in day:
+            if record.date.hour == 6 and record.RRR.isdigit():
+                summPCP += float(record.RRR)
+        return summPCP
+    else:
+        return "no data"
 
 
 def recsListByDay(recsList):
