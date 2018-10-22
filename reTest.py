@@ -4,10 +4,10 @@ def main():
 	""""
 	dafsgvcx
 	"""
-	p = re.compile(r'[Lundi|Mardi|Mercredi|Jeudi|Vendredi|Samedi|Dimanche]{1}')
-	s = 'Mardi'
-	print(p.search(s))
-	print(p.findall(s))
+	p = re.compile(r'\s{0,}\d{1,}\.\d{1,}\s{0,}')
+	s = '2.0'
+	print(p.match(s))
+
 
 
 if __name__ == '__main__':

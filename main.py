@@ -8,7 +8,7 @@ needCols = ['Local time in Dmitrovsk', 'T', 'Po', 'P', 'U', 'Ff', 'N', 'Td', 'RR
 colsDesc = ['T - температура воздуха 2м над землей',
             "Po - Атмосферное давление на уровне станции "
             'Р - атмосферное давление, приведенное к среднему уровню моря',
-            'U - относительная влажность' ,
+            'U - относительная влажность',
             'Ff - скорость ветра на высоте 10-12м над земной поверхностью, осредненная за 10-мин период непосредственно предшествующий сроку наблюдения',
             'N - общая облачность',
             'Td - температура точки росы на 2м',
@@ -23,17 +23,41 @@ def main():
     colNames = content[6]
     colIndexes = {colName: colNames.index(colName) for colName in needCols}
     data = content[7:]
+    for line in data:
+        print(line[0], "   ", line[colIndexes["RRR"]])
     recordsList = linesToObjs(data, colIndexes)[::-1]
     dataByDay = recsListByDay(recordsList)
-    print("\nsepareted by days\n")
-    for l in dataByDay:
-        for el in l:
-            print(el)
-        print()
+    # print("\nsepareted by days\n")
+    # for l in dataByDay:
+    #     for el in l:
+    #         print(el)
+    #     print()
     recountedRecs = recountPCP(dataByDay)
-    print("Recounted pcp(tR)")
+    print("\nRecounted pcp(tR)")
+    # for el in recountedRecs:
+    #     print(el)
+    recountedRecs = fillGapDays(recountedRecs)
     for el in recountedRecs:
         print(el)
+
+
+def fillGapDays(recountedRecs):
+    firstDay = recountedRecs[0].date.day
+    lastDay= recountedRecs[-1].date.day
+    recsLen = len(recountedRecs)
+    if (lastDay - firstDay) == recsLen:
+        return recountedRecs
+    i = 0
+    oneDay = dt.timedelta(days=1)
+    while i < (recsLen - 1):
+        currDate = recountedRecs[i].date
+        nextDate = recountedRecs[i + 1].date
+        if nextDate.day != (nextDate.day - 1):
+            fillGapDay = currDate + oneDay
+            newRecord = Record(fillGapDay, "no data", "no data")
+            recountedRecs.insert(i + 1, newRecord)
+        i += 1
+    return (recountedRecs)
 
 
 def recountPCP(dataByDay):
@@ -46,28 +70,31 @@ def recountPCP(dataByDay):
 def recountDay(day):
     lastRecord = day[0]
     for record in day:
-        if (record.RRR == "no data"):
+        if record.RRR == "no data":
             continue
         else:
             lastRecord = record
     # print("last record", lastRecord)
-    summPCP = countPCPSum(lastRecord, day)
+    tR_template = re.compile(r'\s{0,}\d{1,}\.\d{1,}\s{0,}')
+    summPCP = countPCPSum(lastRecord, day, tR_template)
     # print("sum pcp", summPCP)
     # if lastRecord.RRR == no data  ---->>> means to mark it as NO DATA or smth else
-    newRecord = Record(dt.date(year=lastRecord.date.year, month=lastRecord.date.month, day=lastRecord.date.day), summPCP, lastRecord.tR)
+    newRecord = Record(dt.date(year=lastRecord.date.year, month=lastRecord.date.month, day=lastRecord.date.day),
+                       summPCP, "24")
     return newRecord
 
-def countPCPSum(lastRecord, day):
+def countPCPSum(lastRecord, day, tR_template):
     summPCP = 0
+
     if lastRecord.date.hour == 21:
-        if lastRecord.RRR != "No precipitation":
+        if tR_template.match(lastRecord.RRR):
             summPCP += float(lastRecord.RRR)
         for record in day:
             if record.date.hour == 9 and record.RRR.isdigit():
                 summPCP += float(record.RRR)
         return summPCP
     elif lastRecord.date.hour == 18:
-        if lastRecord.RRR != "No precipitation":
+        if tR_template.match(lastRecord.RRR):
             summPCP += float(lastRecord.RRR)
         for record in day:
             if record.date.hour == 6 and record.RRR.isdigit():
@@ -83,7 +110,7 @@ def recsListByDay(recsList):
     :return: list of lists by day
     """
     dateByDay = []
-    i = 0;
+    i = 0
     recsLen = len(recsList)
     res = []
     while i < (recsLen - 1):
