@@ -3,7 +3,8 @@ from bs4 import BeautifulSoup as bs
 from pprint import pprint
 import datetime as dt
 from dateutil.relativedelta import relativedelta
-from main import isDayEqual
+import calendar
+
 
 url = "http://www.pogodaiklimat.ru/weather.php"
 charset = "windows-1251"
@@ -40,13 +41,15 @@ def main():
     curr_data = start_data
     dates = []
     while (isNotMonthYearEqual(curr_data, end_data)):
-        # print("curr data", curr_data)
+        print("curr data", curr_data)
+        month_last = calendar.monthrange(curr_data.year, curr_data.month)[1]
+        print(month_last)
         curr_data += one_month
         dates.append(curr_data)
     print(len(dates))
 
 
-def isNotMonthYearEqual(date1, date2):
+def isNotMonthYearEqual(date1, date2):#change this ugly function
     if date1.month != date2.month:
         return True
     if date1.year != date2.year:
