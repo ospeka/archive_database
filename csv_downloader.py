@@ -4,6 +4,7 @@ from pprint import pprint
 import datetime as dt
 from dateutil.relativedelta import relativedelta
 import calendar
+import json
 
 
 url = "http://www.pogodaiklimat.ru/weather.php"
@@ -21,32 +22,46 @@ id = "26898"#bryansk
 start_data = dt.date(year=2011, month=1, day=1)
 end_data = dt.date.today()
 
+
 def main():
-    # get_params = {
-    #     "id": "26898",
-    #     "bday": "1",
-    #     "fday": "10",
-    #     "amonth": "10",
-    #     "ayear": "2018",
-    #     "bot": "0"
-    # }
-    # table = get_table(get_params["id"], get_params["bday"], get_params["amonth"], get_params["ayear"])
-    # # for item in table:
-    # #     print(item.prettify())
-    # data = parse_table(table)
-    # pprint(data)
-    print("start data ", start_data)
-    print("end data ", end_data)
+    city_ids = json.load(open("./city_ids.json", "r"))
+    pprint(city_ids)
+    get_params = {
+        "id": "26898",
+        "bday": "1",
+        "fday": "10",
+        "amonth": "10",
+        "ayear": "2018",
+        "bot": "2"
+    }
     one_month = relativedelta(months=1)
     curr_data = start_data
-    dates = []
-    while (isNotMonthYearEqual(curr_data, end_data)):
-        print("curr data", curr_data)
-        month_last = calendar.monthrange(curr_data.year, curr_data.month)[1]
-        print(month_last)
-        curr_data += one_month
-        dates.append(curr_data)
-    print(len(dates))
+    data_list = []
+    i = 1
+    j = 1
+    for city in city_ids.keys():
+        print(city, "number - ", j)
+        data_list.append({city: city_ids[city]})
+        get_params['id'] = city_ids[city]
+        while isNotMonthYearEqual(curr_data, end_data):
+            print("request number - ", i)
+            month_last = calendar.monthrange(curr_data.year, curr_data.month)[1]
+            get_params['fday'] = str(month_last)
+            get_params['amonth'] = str(curr_data.month)
+            get_params['ayear'] = str(curr_data.year)
+            table = get_table(get_params)
+            data = parse_table(table)
+            data['date'].append({'year': get_params["ayear"]})
+            data_list.append(data)
+            curr_data += one_month
+            i += 1
+        i = 0
+        j += 1
+        curr_data = start_data
+        with open("./downloaded_data/" + str(city) + ".json", 'w+') as fout:
+            json.dump(data_list, fout)
+        data_list = []
+
 
 
 def isNotMonthYearEqual(date1, date2):#change this ugly function
@@ -57,15 +72,7 @@ def isNotMonthYearEqual(date1, date2):#change this ugly function
     return False
 
 
-def get_table(id, start_day, finish_day, month, year):
-    get_params = {
-        "id": id,
-        "bday": start_day,
-        "fday": finish_day,
-        "amonth": month,
-        "ayear": year,
-        "bot": "0"
-    }
+def get_table(get_params):
     resp = r.get(url, get_params)
     soup = bs(resp.content, "html.parser")
     table = soup.find("div", {"id": "archive"}).table.table
@@ -95,12 +102,6 @@ def parse_table(trs):
         data['R'].append(tds[17].text)
         data['S'].append(tds[19].text)
     return data
-
-def create_col_names_dict(first_tr):
-    all_tds = first_tr.find_all('td')
-    col_names = {td.text: [] for td in all_tds}
-    return col_names
-
 
 
 
