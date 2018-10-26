@@ -41,7 +41,7 @@ def main():
     j = 1
     for city in city_ids.keys():
         print(city, "number - ", j)
-        data_list.append({city: city_ids[city]})
+        data_list.append({'city': city, 'city_id': city_ids[city]})
         get_params['id'] = city_ids[city]
         while isNotMonthYearEqual(curr_data, end_data):
             print("request number - ", i)
@@ -51,17 +51,17 @@ def main():
             get_params['ayear'] = str(curr_data.year)
             table = get_table(get_params)
             data = parse_table(table)
+            data['year'] = str(curr_data.year)
             data['date'].append({'year': get_params["ayear"]})
             data_list.append(data)
             curr_data += one_month
             i += 1
-        i = 0
+        i = 1
         j += 1
         curr_data = start_data
         with open("./downloaded_data/" + str(city) + ".json", 'w+') as fout:
             json.dump(data_list, fout)
         data_list = []
-
 
 
 def isNotMonthYearEqual(date1, date2):#change this ugly function
@@ -89,7 +89,9 @@ def parse_table(trs):
         'Tmin': [],
         'Tmax': [],
         'R': [],
-        'S': []
+        'S': [],
+        'f': [],
+        'Td': []
     }
     for tr in trs[1:]:
         tds = tr.find_all('td')
@@ -101,10 +103,9 @@ def parse_table(trs):
         data['Tmax'].append(tds[16].text)
         data['R'].append(tds[17].text)
         data['S'].append(tds[19].text)
+        data['Td'].append(tds[8].text)
+        data['f'].append(tds[9].text)
     return data
-
-
-
 
 if __name__ == '__main__':
     main()
