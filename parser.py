@@ -9,14 +9,14 @@ def main():
     for i in range(15):
 
         for key in data[i].keys():
-            print("{:>10s}".format(key), end=" ")
+            print("{:>20s}".format(key), end=" ")
         print()
         for j in range(15):
             for key in data[i].keys():
                 if (data[i][key][j] == ""):
-                    print("{:>10s}".format("_"), end=" ")
+                    print("{:>20s}".format("_"), end=" ")
                     continue
-                print("{:>10s}".format(data[i][key][j]), end=" ")
+                print("{:>20s}".format(data[i][key][j]), end=" ")
             print()
 
 
