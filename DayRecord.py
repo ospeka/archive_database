@@ -25,6 +25,16 @@ class DayRecord:
         self.f = round(avg_list(month_data['f'][i:j]), 2)
         self.Td = round(avg_list(month_data['Td'][i:j]), 2)
 
+    def __str__(self):
+        fields = self.__dict__.keys()
+        s = ""
+        for field in fields:
+            s += str(field) + " "
+        s += "\n"
+        for field in fields:
+            s += str(self.__getattribute__(field)) + " "
+        return s
+
 
 def str_list_sum(lst):
     summary = 0

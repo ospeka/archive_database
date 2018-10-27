@@ -11,6 +11,8 @@ def main():
     print("monthes - ", len(data) - 1)
     print("city - ", data[0]['city'])
     month_data = parse_month(data[1])
+    for day in month_data:
+        print(day)
     #use extend here
 
 def parse_month(month):
@@ -18,12 +20,12 @@ def parse_month(month):
     num_of_recs_by_day = num_of_records_by_day(month)
     # pprint(num_of_recs_by_day)
     i = 0
+    month_record = []
     for key in num_of_recs_by_day.keys():
         j = i + num_of_recs_by_day[key]
-
-        day_record = DayRecord(i, j, month_data=month, date=key)
-
+        month_record.append(DayRecord(i, j, month_data=month, date=key))
         i += num_of_recs_by_day[key]
+    return month_record
 
 
 def num_of_records_by_day(month):
