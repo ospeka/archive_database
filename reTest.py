@@ -1,12 +1,13 @@
 import re
 
+t1 = '5{11}'
+t2 = '5-11{11}'
+
 def main():
-	""""
-	dafsgvcx
-	"""
-	p = re.compile(r'\s{0,}\d{1,}\.\d{1,}\s{0,}')
-	s = '2.0'
-	print(p.match(s))
+	p = re.compile(r'\d{1,}\{\d{1,}\}')
+	print(p.match(t1))
+	print(type(p))
+	print(p.search(r'\d{1,}'))
 
 
 

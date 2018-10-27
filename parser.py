@@ -10,10 +10,15 @@ def main():
     # print_month(data[1])
     print("monthes - ", len(data) - 1)
     print("city - ", data[0]['city'])
-    month_data = parse_month(data[1])
-    for day in month_data:
-        print(day)
-    #use extend here
+
+    # month_data = parse_month(data[1])
+    city_data = []
+    month_number = 1
+    for month in data[1:]:
+        print("month number - |", month_number)
+        month_data = parse_month(month)
+        city_data.extend(month_data)
+        month_number += 1
 
 def parse_month(month):
     year = month['year']
@@ -33,8 +38,7 @@ def num_of_records_by_day(month):
     month['date'] = month['date'][0:-1]
     num_of_recs_by_day = {}
     for date_str in month['date']:
-        date = dt.datetime.strptime(date_str, '%H %d.%m')
-        date = date.replace(year=int(year))
+        date = dt.datetime.strptime(date_str + " " + year, '%H %d.%m %Y')
         num_of_recs_by_day[date] = 0
     res = OrderedDict()
     for key in num_of_recs_by_day.keys():

@@ -24,6 +24,8 @@ class DayRecord:
         self.S = round(str_list_sum(month_data['S'][i:j]), 2)
         self.f = round(avg_list(month_data['f'][i:j]), 2)
         self.Td = round(avg_list(month_data['Td'][i:j]), 2)
+        print(self.date)
+        print()
 
     def __str__(self):
         fields = self.__dict__.keys()
@@ -46,15 +48,29 @@ def str_list_sum(lst):
 
 
 def avg_list(lst):
-    return sum([float(el) for el in lst]) / len(lst)
+    print(lst)
+    #re match
+    summary = 0
+    true_len = 0
+    for el in lst:
+        try:
+            summary += float(el)
+            true_len += 1
+        except ValueError:
+            continue
+    return summary / true_len
 
 
 def calc_cloud(data_slice):
+    # here must be regexp match to clouds records format
     cloud_nums = []
     for el in data_slice:
         if el == "ясно":
             cloud_nums.append(0)
             continue
         slash_index = el.index('/')
-        cloud_nums.append(int(el[:slash_index]))
+        try:
+            cloud_nums.append(int(el[:slash_index]))
+        except ValueError:
+            continue
     return avg_list(cloud_nums)
