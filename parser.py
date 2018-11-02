@@ -25,12 +25,12 @@ def parse_month(month):
     num_of_recs_by_day = num_of_records_by_day(month)
     # pprint(num_of_recs_by_day)
     i = 0
-    month_record = []
+    month_records = []
     for key in num_of_recs_by_day.keys():
         j = i + num_of_recs_by_day[key]
-        month_record.append(DayRecord(i, j, month_data=month, date=key))
+        month_records.append(DayRecord(start=i, end=j, month_data=month, date=key))
         i += num_of_recs_by_day[key]
-    return month_record
+    return month_records
 
 
 def num_of_records_by_day(month):
