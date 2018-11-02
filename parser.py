@@ -15,10 +15,11 @@ def main():
     city_data = []
     month_number = 1
     for month in data[1:]:
-        print("month number - |", month_number)
         month_data = parse_month(month)
         city_data.extend(month_data)
         month_number += 1
+    for rec in city_data:
+        print(rec)
 
 def parse_month(month):
     year = month['year']

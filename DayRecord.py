@@ -22,6 +22,16 @@ class DayRecord:
     wind_patt1 = re.compile(r'\d{1,3}\{\d{1,5}\}')
     wind_patt2 = re.compile(r'5-11{13}')
 
+    def __str__(self):
+        fields = self.__dict__.keys()
+        s = ""
+        for field in fields:
+            s += str(field) + " "
+        s += "\n"
+        for field in fields:
+            s += str(self.__getattribute__(field)) + " "
+        return s
+
     def __init__(self, start=0, end=0, month_data=[], date=None):
         self.date = date
         self.wind = month_data['wind'][start:end]
