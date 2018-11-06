@@ -32,6 +32,9 @@ def update_db():
     cities = [el[0] for el in tables]
     for city in cities:
         path = download_data(city, cursor)
+        if path is None:
+            print("Update for ", city, " doesnt need.")
+            continue
         print(path)
         city_data, city_name = parser.get_city_data(path)
         if os.path.isfile(path):
@@ -69,6 +72,8 @@ def download_data(city, cursor):
     data_list = []
     city_ids = json.load(open("./city_ids.json", "r"))
     data_list.append({'city': city, 'city_id': city_ids[city]})
+    if curr_date.day == end_date.day and curr_date.month == end_date.month and curr_date.year == end_date.year:
+        return None
     while curr_date.day != end_date.day:
         curr_date += one_day
         get_params['bday'] = curr_date.day
