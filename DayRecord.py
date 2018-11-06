@@ -40,9 +40,9 @@ class DayRecord:
         self.recount_cloud()
         self.t = month_data['T'][start:end]
         self.recount_t()
-        self.tmin = month_data['Tmin'][start:end]
+        self.tmin = month_data['T'][start:end]
         self.recount_tmin()
-        self.tmax = month_data['Tmax'][start:end]
+        self.tmax = month_data['T'][start:end]
         self.recount_tmax()
         #pcp == R  == опади
         self.pcp = month_data['R'][start:end]
@@ -91,7 +91,7 @@ class DayRecord:
             if isfloat(rec):
                 t_max_nums.append(float(rec))
         if t_max_nums:
-            self.tmax = min(t_max_nums)
+            self.tmax = max(t_max_nums)
         else:
             self.tmax = None
 

@@ -3,7 +3,7 @@ from pprint import pprint
 import datetime as dt
 import dateutil.parser as dp
 from dateutil.relativedelta import relativedelta
-from csv_downloader import get_table, parse_table, isNotMonthYearEqual
+from csv_downloader import get_table, parse_table
 import json
 import parser
 import os
@@ -47,14 +47,10 @@ def update_db():
 
 
 def insert_update(data, city_name, cursor):
-    print(city_name)
-    for el in data:
-        print(el)
     for rec in data:
         cursor.execute("INSERT INTO {} VALUES (?,?,?,?,?,?,?,?,?,?)".format(city_name),
                        (None, rec.date, rec.wind, rec.cloud, rec.t, rec.tmin, rec.tmax, rec.pcp, rec.s, rec.hum))
     print("Update done.")
-
 
 
 def download_data(city, cursor):
@@ -62,7 +58,7 @@ def download_data(city, cursor):
     download data and save it in json file with path = "./update_data./upd_data.json"
     :param city:name of city to download data
     :param cursor cursor to sqlite db
-    :return: path to downloaded data
+    :return: path to downloaded data or None when update doesnt needed
     """
     max_date = cursor.execute("SELECT MAX(dt) FROM {}".format(city)).fetchall()[0][0]
     start_date = dp.parse(max_date)
