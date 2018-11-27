@@ -54,8 +54,8 @@ def recount_pcp(pcp_data):
     for i in range(records_len - 1):
         today_pcp = records[i][1]
         tomorrow_pcp = records[i + 1][1]
-        print([(h, p) for h, p in zip(hours, today_pcp)])
-        print([(h, p) for h, p in zip(hours, tomorrow_pcp)])
+        # print([(h, p) for h, p in zip(hours, today_pcp)])
+        # print([(h, p) for h, p in zip(hours, tomorrow_pcp)])
         try:
             if today_pcp[5] != '':
                 if tomorrow_pcp[1] != '':
@@ -70,8 +70,10 @@ def recount_pcp(pcp_data):
         except IndexError:
             # print('Error', today_pcp, tomorrow_pcp)
             pcp = None
-        print(pcp)
-        print()
+        records[i][1] = pcp
+        # print(pcp)
+        # print()
+    pprint(records)
 
 
 def parse_month(month):
