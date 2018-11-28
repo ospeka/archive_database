@@ -4,36 +4,27 @@ import datetime as dt
 from collections import OrderedDict
 from DayRecord import DayRecord
 
-def get_city_data(path="./downloaded_data/Druzhba.json"):
+def get_city_data(path="./downloaded_data/SpasDemensk.json"):
     data = json.load(open(path, 'r'))
-    # print("year = ", data[1]['date'][-1]['year'])
-    # print("monthes - ", len(data) - 1)
-    # print("city - ", data[0]['city'])
     city_name = data[0]['city']
-    # month_data = parse_month(data[1])
     city_data = []
-    month_number = 1
-    # for month in data[1:]:
-    #     month_data = parse_month(month)
-    #     city_data.extend(month_data)
-    #     month_number += 1
-    # for rec in city_data:
-    #     print(rec)
-    # test = parse_month(data[1])
-    # for t in test:
-    #     print(t)
+    for month in data[1:]:
+        month_data = parse_month(month)
+        city_data.extend(month_data)
     pcp_data = []
-    # for month in data[1:]:
-    month = data[1]
     for month in data[1:]:
         month_len = len(month['date'])
-        year = month['date'][-1]['year']
+        year = month['year']
         for i in range(month_len - 1):
             date = month['date'][i] + ' ' + year
             pcp = month['R'][i]
             pcp_data.append([date, pcp])
-    # pprint(pcp_data)
-    pcp_data = recount_pcp(pcp_data)
+    pcp_data = recount_pcp(pcp_data)[:-1]# last day pcp is not counable coz its needed 
+    # next day pcp to recount it
+    for dr, pcp, in zip(city_data, pcp_data):
+        dr.pcp = pcp[1]
+    # for el in pcp_data:
+    #     print(el[0].isoformat(), '    ', el[1])
     return city_data, city_name
 
 def recount_pcp(pcp_data):
@@ -54,8 +45,6 @@ def recount_pcp(pcp_data):
     for i in range(records_len - 1):
         today_pcp = records[i][1]
         tomorrow_pcp = records[i + 1][1]
-        # print([(h, p) for h, p in zip(hours, today_pcp)])
-        # print([(h, p) for h, p in zip(hours, tomorrow_pcp)])
         try:
             if today_pcp[5] != '':
                 if tomorrow_pcp[1] != '':
@@ -67,13 +56,19 @@ def recount_pcp(pcp_data):
                     pcp = float(today_pcp[6]) + float(tomorrow_pcp[2])
                 else:
                     pcp = float(today_pcp[6])
+            elif tomorrow_pcp[1] != '':
+                pcp = float(tomorrow_pcp[1])
+            elif tomorrow_pcp[2] != '':
+                pcp = float(tomorrow_pcp[2])
         except IndexError:
-            # print('Error', today_pcp, tomorrow_pcp)
             pcp = None
+        if pcp != None and pcp > 200:
+            pcp = pcp / 50
+        if pcp != None and pcp > 100:
+            pass # avarage with nearest station1
         records[i][1] = pcp
-        # print(pcp)
-        # print()
-    pprint(records)
+        pcp = None
+    return records
 
 
 def parse_month(month):

@@ -5,7 +5,7 @@ import dateutil.parser as dp
 from dateutil.relativedelta import relativedelta
 from csv_downloader import get_table, parse_table
 import json
-import parser
+from json_parser import get_city_data
 import os
 
 get_params = {
@@ -36,7 +36,7 @@ def update_db():
             print("Update for ", city, " doesnt need.")
             continue
         print(path)
-        city_data, city_name = parser.get_city_data(path)
+        city_data, city_name = get_city_data(path)
         if os.path.isfile(path):
             os.remove(path)
         else:

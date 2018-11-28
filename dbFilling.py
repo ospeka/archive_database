@@ -1,6 +1,6 @@
 import sqlite3
 from pprint import pprint
-import parser
+from json_parser import get_city_data
 import os
 
 db_path = "./db.sqlite"
@@ -9,16 +9,16 @@ db_path = "./db.sqlite"
 def main():
 	dir_list = os.listdir("./downloaded_data")
 	filename, file_extension = os.path.splitext(dir_list[1])
-	# print(filename, file_extension)
+	print(filename, file_extension)
 	for file in dir_list:
 		filename, file_extension = os.path.splitext(file)
 		if file_extension == ".json":
 			print("filename - ", filename)
-			city_data, city_name = parser.get_city_data("./downloaded_data/" + file)
+			city_data, city_name = get_city_data("./downloaded_data/" + file)
 			print(city_name)
 			insert_city_data(city_data, city_name)
-
-
+	# city_data, city_name = get_city_data()
+	# insert_city_data(city_data, city_name)
 
 
 def insert_city_data(city_data, city_name):
