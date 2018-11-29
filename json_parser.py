@@ -41,7 +41,6 @@ def recount_pcp(pcp_data):
             dates[date].append(el[1])
     records = [[key, value] for key, value in dates.items()]
     records_len = len(records)
-    hours = [i for i in range(0, 22, 3)]
     for i in range(records_len - 1):
         today_pcp = records[i][1]
         tomorrow_pcp = records[i + 1][1]
@@ -65,7 +64,7 @@ def recount_pcp(pcp_data):
         if pcp != None and pcp > 200:
             pcp = pcp / 50
         if pcp != None and pcp > 100:
-            pass # avarage with nearest station1
+            pass # avarage with nearest station!
         records[i][1] = pcp
         pcp = None
     return records

@@ -1,5 +1,4 @@
 import sqlite3
-from pprint import pprint
 import datetime as dt
 import dateutil.parser as dp
 from dateutil.relativedelta import relativedelta
