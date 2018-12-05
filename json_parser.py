@@ -41,6 +41,7 @@ def recount_pcp(pcp_data):
             dates[date].append(el[1])
     records = [[key, value] for key, value in dates.items()]
     records_len = len(records)
+    pcp = None
     for i in range(records_len - 1):
         today_pcp = records[i][1]
         tomorrow_pcp = records[i + 1][1]

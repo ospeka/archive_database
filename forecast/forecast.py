@@ -1,7 +1,7 @@
 import requests as r
 from datetime import datetime, timedelta
-from .station import Station
 
+from .station import Station
 from .pcp import count_pcp, write_pcp
 from .clouds import calc_clouds, write_clouds
 from .humidity import calc_hmd, write_hmd
@@ -14,7 +14,7 @@ elev = [248,224,200,167,189,197,157,210,164,176,181,155,154,116,224,231,210,260,
 
 def perform_all(dirpath):
 	stations = create_stations()
-	stations = perfom_calcs(stations)
+	stations = perfrom_calcs(stations)
 	write_pcp(stations, dirpath)
 	write_temp(stations, dirpath)
 	write_wind(stations, dirpath)
@@ -22,7 +22,7 @@ def perform_all(dirpath):
 	write_clouds(stations, dirpath)
 
 
-def perfom_calcs(stations):
+def perform_calcs(stations):
 	for st in stations:
 		st.pcp = count_pcp(st)
 		st.clouds = calc_clouds(st)
