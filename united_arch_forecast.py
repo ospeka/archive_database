@@ -3,58 +3,58 @@ import sqlite3
 from datetime import datetime
 from pprint import pprint
 import os
+import json
 
 db_path = "./db.sqlite"
 dirpath = "./SWAT_united_test"
+city_translit = "./city_translit.json"
 
-def main():
+def main(stations='all'):
 	con = sqlite3.connect(db_path)
 	cursor = con.cursor()
-	# pcp = cursor.execute("""
-	# 	SELECT dt, pcp FROM Bryansk ORDER BY dt
-	# """).fetchall()
-	# # dt_object = datetime.fromisoformat(pcp1[0])
-	# pcp_dt_objects = []
-	# for el in pcp:
-	# 	pcp_record = {}
-	# 	pcp_record['date'] = datetime.fromisoformat(el[0])
-	# 	if el[1]:
-	# 		pcp_record['pcp'] = el[1]
-	# 	else:
-	# 		pcp_record['pcp'] = 0
-	# 	pcp_dt_objects.append(pcp_record)
-	# for el in pcp_dt_objects:
-	# 	day = el['date']
-	# 	first_jan = datetime(day.year, 1, 1)
-	# 	print(day.year, end='')
-	# 	delta = day - first_jan
-	# 	days = int(delta.days) + 1
-	# 	# print(days, end='')
-	# 	print("{:03d}".format(days), end='')
-	# 	print("{:05.1f}".format(el['pcp']), end='')
-	# 	print()
-
-	# directory = './'
 	# # check is directory empty
-	# paths = write_headers(directory)
-	# from_db = get_data_from_db(cursor)
-	# print('city name - ', from_db[0]['city'])
-	# test_data = from_db[0]['data'][:10]
-	# pprint(test_data)
+	stations = fc.create_stations()#pass stations here
+	stations = fc.perform_calcs(stations)
+	files = write_headers(stations, dirpath)
+	stations_names = [st.name for st in stations]
+	# pprint(stations_names)
+	# pprint(files)
+	translit = json.load(open(city_translit, mode='r'))
+	write_pcp_from_db(files['pcp_file'], cursor, translit, stations_names)
 
-	# stations = fc.create_stations()
-	# stations = fc.perform_calcs(stations)
-	# files = write_headers(stations, dirpath)
-	# write_pcp_from_db(files['pcp_file'], cursor)
-	# print(files)
-	res = cursor.execute("""
-		SELECT name FROM sqlite_master WHERE type='table';
-	""").fetchall()
-	res = [el[0] for el in res]
-	pprint(res)
 
-def write_pcp_from_db(pcp_file, cursor):
-	pass
+def write_pcp_from_db(pcp_file, cursor, translit, stations_names):
+	data = get_data_from_db(cursor, translit, stations_names)
+	file = open(pcp_file, mode='a')
+	i = 0
+	while True:
+		date = datetime.fromisoformat(data[0]['data'][0][0])
+		year = date.year
+		first_jan = datetime(int(date.year), 1, 1)
+		delta = date - first_jan
+		file.write("{}{:03}".format(year, delta.days))
+		for st_data in data:
+			pcp = st_data['data'][i][1]
+			if pcp == None:
+				pcp = 0.0
+			file.write("{:05.1f}".format(pcp))
+		i += 1
+		file.write('\n')
+	file.close()
+
+def get_data_from_db(cursor, translit, stations_names):
+	data = []
+	for st_name in stations_names:
+		translited_name = translit[st_name]
+		st_data = {}
+		st_data['name'] = st_name
+		st_data['alter_name'] = translited_name
+		st_records = cursor.execute("""
+			SELECT dt, pcp from {} ORDER BY dt
+			""".format(translited_name)).fetchall()
+		st_data['data'] = st_records
+		data.append(st_data)
+	return data
 
 def write_headers(stations, dirpath):
 	pcp_file = write_pcp_header(stations, dirpath)
