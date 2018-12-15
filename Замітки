@@ -45,3 +45,8 @@ WHERE strftime('%Y', dt) == '2014'
         6) виконати моделювання з SWAT
 
         ## узгодити (match)  імена станцій з прогнозу і бази
+
+
+INSERT INTO Vishgorod (dt, wind, cloud, t, tmin, tmax, pcp, s, hum)
+SELECT dt, wind, cloud, t, tmin, tmax, pcp, s, hum FROM Oster
+WHERE dt BETWEEN "2011-01-01 00:00:00" AND "2012-10-04 00:00:00"

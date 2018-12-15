@@ -1,9 +1,11 @@
 import forecast.forecast as fc
 import sqlite3
-from datetime import datetime
+import datetime
 from pprint import pprint
 import os
 import json
+import dateutil.parser as p
+from datetime import datetime
 
 db_path = "./db.sqlite"
 dirpath = "./SWAT_united_test"
@@ -24,23 +26,29 @@ def main(stations='all'):
 
 
 def write_pcp_from_db(pcp_file, cursor, translit, stations_names):
-	data = get_data_from_db(cursor, translit, stations_names)
+	pcp_data = get_data_from_db(cursor, translit, stations_names)
 	file = open(pcp_file, mode='a')
 	i = 0
-	while True:
-		date = datetime.fromisoformat(data[0]['data'][0][0])
+	days_count = len(pcp_data[0]['data'])
+	while i < days_count:
+		date = p.parse(pcp_data[0]['data'][i][0])
 		year = date.year
 		first_jan = datetime(int(date.year), 1, 1)
 		delta = date - first_jan
-		file.write("{}{:03}".format(year, delta.days))
-		for st_data in data:
-			pcp = st_data['data'][i][1]
-			if pcp == None:
-				pcp = 0.0
-			file.write("{:05.1f}".format(pcp))
+		# file.write("{}{:03}".format(year, delta.days + 1))
+		for st in pcp_data:
+			try:
+				day_pcp = st['data'][i][1]
+			except IndexError:
+				print(st['name'])
+				print(i)
+			# print(st['name'])
+			if day_pcp == None:
+				day_pcp = 0.0
+			# file.write("{:05.1f}".format(day_pcp))
+		# print('i=', i)
 		i += 1
 		file.write('\n')
-	file.close()
 
 def get_data_from_db(cursor, translit, stations_names):
 	data = []

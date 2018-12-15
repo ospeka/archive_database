@@ -14,7 +14,7 @@ elev = [248,224,200,167,189,197,157,210,164,176,181,155,154,116,224,231,210,260,
 
 def perform_all(dirpath):
 	stations = create_stations()
-	stations = perfrom_calcs(stations)
+	stations = perform_calcs(stations)
 	write_pcp(stations, dirpath)
 	write_temp(stations, dirpath)
 	write_wind(stations, dirpath)
