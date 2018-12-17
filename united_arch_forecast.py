@@ -145,4 +145,4 @@ def write_wind_header(stations, dirpath):
 	return os.path.join(dirpath, "wnd.wnd")
 
 if __name__ == '__main__':
-    main()
+	main()
