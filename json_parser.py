@@ -23,8 +23,7 @@ def get_city_data(path="./downloaded_data/SpasDemensk.json"):
     # next day pcp to recount it
     for dr, pcp, in zip(city_data, pcp_data):
         dr.pcp = pcp[1]
-    # for el in pcp_data:
-    #     print(el[0].isoformat(), '    ', el[1])
+
     return city_data, city_name
 
 def recount_pcp(pcp_data):
@@ -74,7 +73,6 @@ def recount_pcp(pcp_data):
 def parse_month(month):
     year = month['year']
     num_of_recs_by_day = num_of_records_by_day(month)
-    # pprint(num_of_recs_by_day)
     i = 0
     month_records = []
     for key in num_of_recs_by_day.keys():
