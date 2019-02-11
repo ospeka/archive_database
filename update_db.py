@@ -36,10 +36,10 @@ def update_db():
             continue
         print(path)
         city_data, city_name = get_city_data(path)
-        # if os.path.isfile(path):
-        #     os.remove(path)
-        # else:
-        #     print("Error: %s file not found" % path)
+        if os.path.isfile(path):
+            os.remove(path)
+        else:
+            print("Error: %s file not found" % path)
         insert_update(city_data, city_name, cursor)
     con.commit()
     con.close()

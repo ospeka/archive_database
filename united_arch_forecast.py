@@ -23,11 +23,51 @@ def main(stations='all'):
     # pprint(stations_names)
     # pprint(files)
     translit = json.load(open(city_translit, mode='r'))
-    write_pcp_from_db(files['pcp_file'], cursor, translit, stations_names)
+    # write_pcp_from_db(files['pcp_file'], cursor, translit, stations_names)
+    write_temp_from_db(files['temp_file'], cursor, translit, stations_names)
 
+def write_temp_from_db(temp_file, cursor, translit, stations_names):
+    temp_data = get_tempdata_from_db(cursor, translit, stations_names)
+    file = open(temp_file, mode='a')
+    i = 0
+    days_count = len(temp_data[0]['data'])
+    while i < days_count:
+        date = dt_parser.parse(temp_data[0]['data'][i][0])
+        year = date.year
+        first_jan = datetime(int(date.year), 1, 1)
+        delta = date - first_jan
+        file.write("{}{:03}".format(year, delta.days + 1))
+        for st in temp_data:
+            try:
+                max_temp = st['data'][i][1]
+                min_temp = st['data'][i][2]
+                pass
+            except IndexError:
+                print(st['name'])
+                print(i)
+            # print(type(max_temp))
+            file.write("{:-05.1f}".format(float(max_temp)))
+            file.write("{:-05.1f}".format(float(min_temp)))
+        i += 1
+        file.write("\n")
+
+
+def get_tempdata_from_db(cursor, translit, stations_names):
+    data = []
+    for st_name in stations_names:
+        translited_name = translit[st_name]
+        st_data = {}
+        st_data['name'] = st_name
+        st_data['alter_name'] = translited_name
+        st_records = cursor.execute("""
+            SELECT dt, tmax, tmin from {} ORDER BY dt
+            """.format(translited_name)).fetchall()
+        st_data['data'] = st_records
+        data.append(st_data)
+    return data
 
 def write_pcp_from_db(pcp_file, cursor, translit, stations_names):
-    pcp_data = get_data_from_db(cursor, translit, stations_names)
+    pcp_data = get_pcpdata_from_db(cursor, translit, stations_names)
     file = open(pcp_file, mode='a')
     i = 0
     days_count = len(pcp_data[0]['data'])
@@ -43,16 +83,14 @@ def write_pcp_from_db(pcp_file, cursor, translit, stations_names):
             except IndexError:
                 print(st['name'])
                 print(i)
-            print(st['name'])
             if day_pcp is None:
                 day_pcp = 0.0
             file.write("{:05.1f}".format(day_pcp))
-        # print('i=', i)
         i += 1
         file.write('\n')
 
 
-def get_data_from_db(cursor, translit, stations_names):
+def get_pcp_data_from_db(cursor, translit, stations_names):
     data = []
     for st_name in stations_names:
         translited_name = translit[st_name]

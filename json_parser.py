@@ -1,8 +1,8 @@
 import json
-from pprint import pprint
 import datetime as dt
 from collections import OrderedDict
 from DayRecord import DayRecord
+
 
 def get_city_data(path="./downloaded_data/SpasDemensk.json"):
     data = json.load(open(path, 'r'))
@@ -20,7 +20,7 @@ def get_city_data(path="./downloaded_data/SpasDemensk.json"):
             pcp = month['R'][i]
             pcp_data.append([date, pcp])
     pcp_data = recount_pcp(pcp_data)[:-1]
-    # last day pcp is not counable coz its needed 
+    # last day pcp is not counable coz its needed
     # next day pcp to recount it
     for dr, pcp, in zip(city_data, pcp_data):
         dr.pcp = pcp[1]
