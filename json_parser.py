@@ -19,12 +19,14 @@ def get_city_data(path="./downloaded_data/SpasDemensk.json"):
             date = month['date'][i] + ' ' + year
             pcp = month['R'][i]
             pcp_data.append([date, pcp])
-    pcp_data = recount_pcp(pcp_data)[:-1]# last day pcp is not counable coz its needed 
+    pcp_data = recount_pcp(pcp_data)[:-1]
+    # last day pcp is not counable coz its needed 
     # next day pcp to recount it
     for dr, pcp, in zip(city_data, pcp_data):
         dr.pcp = pcp[1]
 
     return city_data, city_name
+
 
 def recount_pcp(pcp_data):
     dates = OrderedDict()
@@ -61,10 +63,11 @@ def recount_pcp(pcp_data):
                 pcp = float(tomorrow_pcp[2])
         except IndexError:
             pcp = None
-        if pcp != None and pcp > 200:
+        if pcp is not None and pcp > 200:
             pcp = pcp / 50
-        if pcp != None and pcp > 100:
-            pass # avarage with nearest station!
+        if pcp is not None and pcp > 100:
+            pass
+            # avarage with nearest station!
         records[i][1] = pcp
         pcp = None
     return records

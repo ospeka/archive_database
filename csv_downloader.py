@@ -6,19 +6,18 @@ from dateutil.relativedelta import relativedelta
 import calendar
 import json
 
-
 url = "http://www.pogodaiklimat.ru/weather.php"
 charset = "windows-1251"
-#tr - ryadku
-#td - klitunka ryadka
-
+# tr - ryadku
+# td - klitunka ryadka
 # дата
 # Облачность общая (первая цифра до черты)
 # Т, Tmin, Tmax, R, S
 # Ветер скорость
 # И Td надо будет пересчитывать, чтобы вычислить относ. влажность
 # S не понадобится для прогноза, но полезное значение
-id = "26898"#bryansk
+id = "26898"
+# bryansk
 start_data = dt.date(year=2011, month=1, day=1)
 end_data = dt.date.today()
 
@@ -64,7 +63,8 @@ def main():
         data_list = []
 
 
-def isNotMonthYearEqual(date1, date2):#change this ugly function
+def isNotMonthYearEqual(date1, date2):
+    # change this ugly function
     if date1.month != date2.month:
         return True
     if date1.year != date2.year:
@@ -106,6 +106,7 @@ def parse_table(trs):
         data['Td'].append(tds[8].text)
         data['f'].append(tds[9].text)
     return data
+
 
 if __name__ == '__main__':
     main()

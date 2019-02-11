@@ -16,6 +16,7 @@ def isfloat(s):
         return False
     return True
 
+
 class DayRecord:
     # re patterns here
     cloud_patt = re.compile(r'\d{1,2}/')
@@ -44,13 +45,13 @@ class DayRecord:
         self.recount_tmin()
         self.tmax = month_data['T'][start:end]
         self.recount_tmax()
-        #pcp == R  == опади
+        # pcp == R  == опади
         self.pcp = month_data['R'][start:end]
         self.recount_pcp()
-        #s - snow height
+        # s - snow height
         self.s = month_data['S'][start:end]
         self.recount_s()
-        #hum == humidity == f
+        # hum == humidity == f
         self.hum = month_data['f'][start:end]
         self.recount_hum()
         self.td = month_data['Td'][start:end]
@@ -137,8 +138,6 @@ class DayRecord:
         else:
             self.wind = None
 
-
-
     def recount_cloud(self: list):
         cloud_recs = []
         for rec in self.cloud:
@@ -152,9 +151,3 @@ class DayRecord:
             self.cloud = None
             return
         self.cloud = round(count_avg(cloud_recs), 2)
-
-
-
-
-
-

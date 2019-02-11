@@ -5,7 +5,7 @@ from dateutil.relativedelta import relativedelta
 from csv_downloader import get_table, parse_table
 import json
 from json_parser import get_city_data
-import os
+
 
 get_params = {
     "id": "26898",
@@ -24,10 +24,10 @@ def main():
 def update_db():
     con = sqlite3.connect('./db.sqlite')
     cursor = con.cursor()
-    cursor.execute("""
-        		SELECT name FROM sqlite_master WHERE type='table';
-        	""")
-    tables = cursor.fetchall()
+    tables = cursor.execute("""
+                SELECT name FROM sqlite_master WHERE type='table';
+            """).fetchall()
+    # tables = cursor.fetchall()
     cities = [el[0] for el in tables]
     for city in cities:
         path = download_data(city, cursor)
@@ -36,10 +36,10 @@ def update_db():
             continue
         print(path)
         city_data, city_name = get_city_data(path)
-        if os.path.isfile(path):
-            os.remove(path)
-        else:
-            print("Error: %s file not found" % path)
+        # if os.path.isfile(path):
+        #     os.remove(path)
+        # else:
+        #     print("Error: %s file not found" % path)
         insert_update(city_data, city_name, cursor)
     con.commit()
     con.close()
@@ -67,9 +67,9 @@ def download_data(city, cursor):
     data_list = []
     city_ids = json.load(open("./city_ids.json", "r"))
     data_list.append({'city': city, 'city_id': city_ids[city]})
-    if curr_date.day == end_date.day and curr_date.month == end_date.month and curr_date.year == end_date.year:
+    if compare_date(curr_date, end_date):
         return None
-    while curr_date.day != end_date.day:
+    while compare_date(curr_date, end_date) is False:
         curr_date += one_day
         get_params['bday'] = curr_date.day
         get_params['fday'] = curr_date.day
@@ -84,6 +84,20 @@ def download_data(city, cursor):
     with open(path, 'w+') as fout:
         json.dump(data_list, fout)
     return path
+
+
+def compare_date(date1, date2):
+    if date1.year != date2.year:
+        print('here1')
+        return False
+    if date1.month != date2.month:
+        print('here2')
+        return False
+    if date1.day != date2.day:
+        print('here3')
+        return False
+    return True
+
 
 if __name__ == '__main__':
     main()

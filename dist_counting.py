@@ -1,8 +1,8 @@
 import geopy.distance as gp
-from pprint import pprint
 import json
 
 coors_path = "./station_coors.txt"
+
 
 def main():
     content = open(coors_path, mode='r').readlines()

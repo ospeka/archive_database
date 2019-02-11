@@ -48,7 +48,7 @@ def fill_gaps(cursor, st, st_distances):
         data_to_fill = get_data_to_fill(st, cursor, gap_day, st_distances)
         data_to_fill = [el for el in data_to_fill[0][1:]]
         data_to_fill = tuple(data_to_fill)
-        if data_to_fill == None:
+        if data_to_fill is None:
             raise ValueError
         cursor.execute("""
             INSERT INTO {}(dt, wind, cloud, t, tmin, tmax, pcp, s, hum)
@@ -57,7 +57,6 @@ def fill_gaps(cursor, st, st_distances):
 
 
 def get_data_to_fill(st, cursor, gap_day, st_distances):
-    data = None
     i = 0
     while True:
         nearest_st = find_nearest_st(st, st_distances, i)
@@ -75,10 +74,11 @@ def get_data_to_fill(st, cursor, gap_day, st_distances):
             return None
     return res
 
+
 def find_nearest_st(st, st_distances, i=0):
     needed_st = st_distances[st]
     distances = needed_st.values()
-    rev_st_distances = dict([(v, k) for k,v in needed_st.items()])
+    rev_st_distances = dict([(v, k) for k, v in needed_st.items()])
     dist = sorted(list(distances))[i]
     return rev_st_distances[dist]
 
