@@ -5,7 +5,7 @@ from dateutil.relativedelta import relativedelta
 from csv_downloader import get_table, parse_table
 import json
 from json_parser import get_city_data
-
+import os
 
 get_params = {
     "id": "26898",
@@ -88,13 +88,10 @@ def download_data(city, cursor):
 
 def compare_date(date1, date2):
     if date1.year != date2.year:
-        print('here1')
         return False
     if date1.month != date2.month:
-        print('here2')
         return False
     if date1.day != date2.day:
-        print('here3')
         return False
     return True
 
