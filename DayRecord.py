@@ -138,7 +138,7 @@ class DayRecord:
         else:
             self.wind = None
 
-    def recount_cloud(self: list):
+    def recount_cloud(self:list):
         cloud_recs = []
         for rec in self.cloud:
             if rec == 'ясно':

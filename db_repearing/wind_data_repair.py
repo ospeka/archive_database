@@ -15,10 +15,8 @@ def main():
     st_distances = json.load(open(st_distances_path))
     no_wind_dates = find_no_wind_dates(cursor)
     pprint(no_wind_dates)
-    
     for el in no_wind_dates:
         fill_wind_gaps(el, st_distances, cursor)
-    
     conn.commit()
     conn.close()
 
