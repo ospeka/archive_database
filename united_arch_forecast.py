@@ -13,6 +13,7 @@ city_translit = "./city_translit.json"
 irrad_file = "./forecast/Солнечная_радиация_станд_значения.csv"
 a = 0.4
 b = 0.38
+Cor_factor = 0.4
 
 def main(stations='all'):
     con = sqlite3.connect(db_path)
@@ -26,10 +27,10 @@ def main(stations='all'):
     # pprint(stations_names)
     # pprint(files)
     translit = json.load(open(city_translit, mode='r'))
-    # write_pcp_from_db(files['pcp_file'], cursor, translit, stations_names)
-    # write_temp_from_db(files['temp_file'], cursor, translit, stations_names)
-    # write_wind_from_db(files['wind_file'], cursor, translit, stations_names)
-    # write_hum_from_db(files['hum_file'], cursor, translit, stations_names)
+    write_pcp_from_db(files['pcp_file'], cursor, translit, stations_names)
+    write_temp_from_db(files['temp_file'], cursor, translit, stations_names)
+    write_wind_from_db(files['wind_file'], cursor, translit, stations_names)
+    write_hum_from_db(files['hum_file'], cursor, translit, stations_names)
     write_slrdata_from_db(files['clouds_file'], cursor, translit, stations_names)
 
 
@@ -66,12 +67,10 @@ def write_slrdata_from_db(slr_file, cursor, translit, stations_names):
 def use_formula(clouds, irr_data, date, st_name):
     st_index = irr_data[0].index(st_name)
     month_index = date.month
-    print(st_index)
-    print(month_index)
     q_zero = float(irr_data[month_index][st_index])
-    print(q_zero)
     n = clouds / 10
     slr = q_zero * (1 - (a + b * n) * n)
+    slr *= (1 + Cor_factor)
     return round(slr, 3)
 
 
