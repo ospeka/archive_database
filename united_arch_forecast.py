@@ -24,7 +24,50 @@ def main(stations='all'):
     # pprint(files)
     translit = json.load(open(city_translit, mode='r'))
     # write_pcp_from_db(files['pcp_file'], cursor, translit, stations_names)
-    write_temp_from_db(files['temp_file'], cursor, translit, stations_names)
+    # write_temp_from_db(files['temp_file'], cursor, translit, stations_names)
+    write_wind_from_db(files['wind_file'], cursor, translit, stations_names)
+
+
+def write_wind_from_db(wind_file, cursor, translit, stations_names):
+    wind_data = get_winddata_from_db(cursor, translit, stations_names)
+    file = open(wind_file, mode='a')
+    i = 0
+    days_count = len(wind_data[0]['data'])
+    while i < days_count:
+        date = dt_parser.parse(wind_data[0]['data'][i][0])
+        year = date.year
+        first_jan = datetime(int(date.year), 1, 1)
+        delta = date - first_jan
+        file.write("{}{:03}".format(year, delta.days + 1))
+        for st in wind_data:
+            try:
+                wind = st['data'][i][1]
+            except IndexError:
+                print(st['name'])
+                print(i)
+            # print(type(max_temp))
+            try:
+                file.write("{:08.3f}".format(wind))
+            except TypeError:
+                print(st['name'], date, wind)
+        i += 1
+        file.write("\n")
+
+
+def get_winddata_from_db(cursor, translit, stations_names):
+    data = []
+    for st_name in stations_names:
+        translited_name = translit[st_name]
+        st_data = {}
+        st_data['name'] = st_name
+        st_data['alter_name'] = translited_name
+        st_records = cursor.execute("""
+            SELECT dt, wind from {} ORDER BY dt
+            """.format(translited_name)).fetchall()
+        st_data['data'] = st_records
+        data.append(st_data)
+    return data
+
 
 def write_temp_from_db(temp_file, cursor, translit, stations_names):
     temp_data = get_tempdata_from_db(cursor, translit, stations_names)
@@ -41,7 +84,6 @@ def write_temp_from_db(temp_file, cursor, translit, stations_names):
             try:
                 max_temp = st['data'][i][1]
                 min_temp = st['data'][i][2]
-                pass
             except IndexError:
                 print(st['name'])
                 print(i)
