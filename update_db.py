@@ -47,19 +47,23 @@ def update_db():
 
 def insert_update(data, city_name, cursor):
     for rec in data:
-        cursor.execute("INSERT INTO {} VALUES (?,?,?,?,?,?,?,?,?,?)".format(city_name),
-                       (None, rec.date, rec.wind, rec.cloud, rec.t, rec.tmin, rec.tmax, rec.pcp, rec.s, rec.hum))
+        cursor.execute("""
+            INSERT INTO {} VALUES (?,?,?,?,?,?,?,?,?,?)
+            """.format(city_name),(None, rec.date, rec.wind, rec.cloud, rec.t, rec.tmin, rec.tmax, rec.pcp, rec.s, rec.hum))
     print("Update done.")
 
 
 def download_data(city, cursor):
     """
-    download data and save it in json file with path = "./update_data./upd_data.json"
+    download data and save it in json file
+    with path = "./update_data./upd_data.json"
     :param city:name of city to download data
     :param cursor cursor to sqlite db
     :return: path to downloaded data or None when update doesnt needed
     """
-    max_date = cursor.execute("SELECT MAX(dt) FROM {}".format(city)).fetchall()[0][0]
+    max_date = cursor.execute("""
+        SELECT MAX(dt) FROM {}
+        """.format(city)).fetchall()[0][0]
     start_date = dp.parse(max_date)
     end_date = dt.date.today()
     one_day = relativedelta(days=1)
