@@ -6,6 +6,7 @@ from csv_downloader import get_table, parse_table
 import json
 from json_parser import get_city_data
 import os
+from pprint import pprint
 
 get_params = {
     "id": "26898",
@@ -27,7 +28,6 @@ def update_db():
     tables = cursor.execute("""
                 SELECT name FROM sqlite_master WHERE type='table';
             """).fetchall()
-    # tables = cursor.fetchall()
     cities = [el[0] for el in tables]
     for city in cities:
         path = download_data(city, cursor)
@@ -79,6 +79,7 @@ def download_data(city, cursor):
         get_params['fday'] = curr_date.day
         get_params['amonth'] = curr_date.month
         get_params['ayear'] = curr_date.year
+        get_params['id'] = city_ids[city]
         table = get_table(get_params)
         data = parse_table(table)
         data['date'].append({'year': get_params["ayear"]})

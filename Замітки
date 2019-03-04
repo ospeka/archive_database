@@ -54,3 +54,28 @@ WHERE dt BETWEEN "2011-01-01 00:00:00" AND "2012-10-04 00:00:00"
 cursor.execute("""
         SELECT name FROM sqlite_master WHERE type='table';
     """)
+
+1.доробити автостворення input файлів
+в форматі SWAT                              - done
+
+2.запускати SWAT і отримувати output дані
+візуалізація в якості графіка
+
+3.Дані з українських станцій
+
+4.додати можливість вибирати данні з минулого 
+в якості прогнозу з минулих спостережень
+
+5.спробувати вивести shapefile 
+ в пітоні(кидав ссилку)
+
+
+ correct file names:
+    pcp1.pcp
+    Tmp1.Tmp
+    slr.slr
+    wnd.wnd
+    hmd.hmd
+
+    ftp://osipov_weather:jH9lf26Z@uhmi.org.ua:21
+    jH9lf26Z

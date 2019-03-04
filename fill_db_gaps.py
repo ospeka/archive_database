@@ -58,6 +58,7 @@ def fill_gaps(cursor, st, st_distances):
 
 def get_data_to_fill(st, cursor, gap_day, st_distances):
     i = 0
+    # print(gap_day)
     while True:
         nearest_st = find_nearest_st(st, st_distances, i)
         res = cursor.execute("""
@@ -79,6 +80,7 @@ def find_nearest_st(st, st_distances, i=0):
     needed_st = st_distances[st]
     distances = needed_st.values()
     rev_st_distances = dict([(v, k) for k, v in needed_st.items()])
+    # print(i)
     dist = sorted(list(distances))[i]
     return rev_st_distances[dist]
 
