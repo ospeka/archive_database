@@ -15,7 +15,7 @@ def main():
     # upd db before filling!!!
     con = sqlite3.connect(db_path, detect_types=sqlite3.PARSE_DECLTYPES|sqlite3.PARSE_COLNAMES)
     cursor = con.cursor()
-    days_num = (end_date - start_date).days + 1
+    days_num = (end_date - start_date).days
     res = cursor.execute("""
         SELECT name
         FROM sqlite_master

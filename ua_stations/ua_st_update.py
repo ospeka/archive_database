@@ -17,7 +17,7 @@ f.connect("uhmi.org.ua", 21)
 f.login("osipov_weather",  "jH9lf26Z")
 f.cwd("osipov_weather")
 
-db_path = "./db.sqlite"
+db_path = "../db.sqlite"
 ua_ids_path = "./ua_ids.json"
 
 ua_stations = [
@@ -81,6 +81,8 @@ def insert_data(st, cursor, cols):
     pcp = float(cols[6])
     s = float(cols[8])
     hum = calc_hum(Td=float(cols[3]), t=t)
+    if hum > 1:
+        hum = 1
     cursor.execute("""
         INSERT INTO {} 
         VALUES (?,?,?,?,?,?,?,?,?,?)
@@ -88,7 +90,7 @@ def insert_data(st, cursor, cols):
     # print(None, dt, wind, cloud, t, tmin, tmax, pcp, s, hum)
 
 def calc_hum(Td=15, t=15):
-    rh = 100*(exp((17.625*Td)/(243.04+Td))/exp((17.625*t)/(243.04+t)))
+    rh = (exp((17.625*Td)/(243.04+Td))/exp((17.625*t)/(243.04+t)))
     return round(rh,3)
 
 def get_file_lines(st, date, ua_ids):
@@ -99,8 +101,8 @@ def get_file_lines(st, date, ua_ids):
         f.retrlines("RETR ./" + file_name, callback=file_lines.append)
     # except correct exception if file not reachable
     except:
-        print(file_name)
-        print("didnt reach")
+        # print(file_name)
+        # print("didnt reach")
         return None
     st_id = ua_ids[st]
     for line in file_lines:
