@@ -6,7 +6,6 @@ from csv_downloader import get_table, parse_table
 import json
 from json_parser import get_city_data
 import os
-from pprint import pprint
 
 get_params = {
     "id": "26898",
@@ -17,6 +16,26 @@ get_params = {
     "bot": "2"
 }
 
+cities = [
+    "Bryansk",
+    "Dmitrovsk",
+    "Elnya",
+    "Fatezh",
+    "Karachaev",
+    "Kurchatov",
+    "Kursk",
+    "Navlya",
+    "Oboyan",
+    "Poniri",
+    "Rilsk",
+    "SpasDemensk",
+    "Tim",
+    "Trubchevsk",
+    "Unecha",
+    "Zhizdra",
+    "Zhukovka"
+]
+
 
 def main():
     update_db()
@@ -25,10 +44,6 @@ def main():
 def update_db():
     con = sqlite3.connect('./db.sqlite')
     cursor = con.cursor()
-    tables = cursor.execute("""
-                SELECT name FROM sqlite_master WHERE type='table';
-            """).fetchall()
-    cities = [el[0] for el in tables]
     for city in cities:
         path = download_data(city, cursor)
         if path is None:

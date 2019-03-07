@@ -1,0 +1,256 @@
+Немає відповідних файлів для відповідних станцій 
+на фтп сервері
+
+Chernigiv
+cgms_10_01_2018.txt
+didnt reach
+cgms_26_04_2018.txt
+didnt reach
+cgms_27_04_2018.txt
+didnt reach
+cgms_03_01_2019.txt
+didnt reach
+cgms_04_01_2019.txt
+didnt reach
+cgms_10_01_2019.txt
+didnt reach
+cgms_11_01_2019.txt
+didnt reach
+cgms_12_01_2019.txt
+didnt reach
+cgms_13_01_2019.txt
+didnt reach
+cgms_14_01_2019.txt
+didnt reach
+cgms_19_01_2019.txt
+didnt reach
+Druzhba
+cgms_10_01_2018.txt
+didnt reach
+cgms_26_04_2018.txt
+didnt reach
+cgms_27_04_2018.txt
+didnt reach
+cgms_03_01_2019.txt
+didnt reach
+cgms_04_01_2019.txt
+didnt reach
+cgms_10_01_2019.txt
+didnt reach
+cgms_11_01_2019.txt
+didnt reach
+cgms_12_01_2019.txt
+didnt reach
+cgms_13_01_2019.txt
+didnt reach
+cgms_14_01_2019.txt
+didnt reach
+cgms_19_01_2019.txt
+didnt reach
+Gluchiv
+cgms_10_01_2018.txt
+didnt reach
+cgms_26_04_2018.txt
+didnt reach
+cgms_27_04_2018.txt
+didnt reach
+cgms_03_01_2019.txt
+didnt reach
+cgms_04_01_2019.txt
+didnt reach
+cgms_10_01_2019.txt
+didnt reach
+cgms_11_01_2019.txt
+didnt reach
+cgms_12_01_2019.txt
+didnt reach
+cgms_13_01_2019.txt
+didnt reach
+cgms_14_01_2019.txt
+didnt reach
+cgms_19_01_2019.txt
+didnt reach
+Konotop
+cgms_10_01_2018.txt
+didnt reach
+cgms_26_04_2018.txt
+didnt reach
+cgms_27_04_2018.txt
+didnt reach
+cgms_03_01_2019.txt
+didnt reach
+cgms_04_01_2019.txt
+didnt reach
+cgms_10_01_2019.txt
+didnt reach
+cgms_11_01_2019.txt
+didnt reach
+cgms_12_01_2019.txt
+didnt reach
+cgms_13_01_2019.txt
+didnt reach
+cgms_14_01_2019.txt
+didnt reach
+cgms_19_01_2019.txt
+didnt reach
+Nizhin
+cgms_10_01_2018.txt
+didnt reach
+cgms_26_04_2018.txt
+didnt reach
+cgms_27_04_2018.txt
+didnt reach
+cgms_03_01_2019.txt
+didnt reach
+cgms_04_01_2019.txt
+didnt reach
+cgms_10_01_2019.txt
+didnt reach
+cgms_11_01_2019.txt
+didnt reach
+cgms_12_01_2019.txt
+didnt reach
+cgms_13_01_2019.txt
+didnt reach
+cgms_14_01_2019.txt
+didnt reach
+cgms_19_01_2019.txt
+didnt reach
+Oster
+cgms_10_01_2018.txt
+didnt reach
+cgms_26_04_2018.txt
+didnt reach
+cgms_27_04_2018.txt
+didnt reach
+cgms_03_01_2019.txt
+didnt reach
+cgms_04_01_2019.txt
+didnt reach
+cgms_10_01_2019.txt
+didnt reach
+cgms_11_01_2019.txt
+didnt reach
+cgms_12_01_2019.txt
+didnt reach
+cgms_13_01_2019.txt
+didnt reach
+cgms_14_01_2019.txt
+didnt reach
+cgms_19_01_2019.txt
+didnt reach
+Pokoshichi
+cgms_10_01_2018.txt
+didnt reach
+cgms_26_04_2018.txt
+didnt reach
+cgms_27_04_2018.txt
+didnt reach
+cgms_03_01_2019.txt
+didnt reach
+cgms_04_01_2019.txt
+didnt reach
+cgms_10_01_2019.txt
+didnt reach
+cgms_11_01_2019.txt
+didnt reach
+cgms_12_01_2019.txt
+didnt reach
+cgms_13_01_2019.txt
+didnt reach
+cgms_14_01_2019.txt
+didnt reach
+cgms_19_01_2019.txt
+didnt reach
+Semenivka
+cgms_10_01_2018.txt
+didnt reach
+cgms_26_04_2018.txt
+didnt reach
+cgms_27_04_2018.txt
+didnt reach
+cgms_03_01_2019.txt
+didnt reach
+cgms_04_01_2019.txt
+didnt reach
+cgms_10_01_2019.txt
+didnt reach
+cgms_11_01_2019.txt
+didnt reach
+cgms_12_01_2019.txt
+didnt reach
+cgms_13_01_2019.txt
+didnt reach
+cgms_14_01_2019.txt
+didnt reach
+cgms_19_01_2019.txt
+didnt reach
+Shchors
+cgms_10_01_2018.txt
+didnt reach
+cgms_26_04_2018.txt
+didnt reach
+cgms_27_04_2018.txt
+didnt reach
+cgms_03_01_2019.txt
+didnt reach
+cgms_04_01_2019.txt
+didnt reach
+cgms_10_01_2019.txt
+didnt reach
+cgms_11_01_2019.txt
+didnt reach
+cgms_12_01_2019.txt
+didnt reach
+cgms_13_01_2019.txt
+didnt reach
+cgms_14_01_2019.txt
+didnt reach
+cgms_19_01_2019.txt
+didnt reach
+Sumi
+cgms_10_01_2018.txt
+didnt reach
+cgms_26_04_2018.txt
+didnt reach
+cgms_27_04_2018.txt
+didnt reach
+cgms_03_01_2019.txt
+didnt reach
+cgms_04_01_2019.txt
+didnt reach
+cgms_10_01_2019.txt
+didnt reach
+cgms_11_01_2019.txt
+didnt reach
+cgms_12_01_2019.txt
+didnt reach
+cgms_13_01_2019.txt
+didnt reach
+cgms_14_01_2019.txt
+didnt reach
+cgms_19_01_2019.txt
+didnt reach
+Vishgorod
+cgms_10_01_2018.txt
+didnt reach
+cgms_26_04_2018.txt
+didnt reach
+cgms_27_04_2018.txt
+didnt reach
+cgms_03_01_2019.txt
+didnt reach
+cgms_04_01_2019.txt
+didnt reach
+cgms_10_01_2019.txt
+didnt reach
+cgms_11_01_2019.txt
+didnt reach
+cgms_12_01_2019.txt
+didnt reach
+cgms_13_01_2019.txt
+didnt reach
+cgms_14_01_2019.txt
+didnt reach
+cgms_19_01_2019.txt
+didnt reach

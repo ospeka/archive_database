@@ -44,7 +44,7 @@ def main():
         max_date = get_max_date(st, cursor)
         update_st(max_date, st, cursor, ua_ids)
 
-    # conn.commit()
+    conn.commit()
     conn.close()
 
 
@@ -59,9 +59,9 @@ def get_max_date(st, cursor):
 def update_st(max_date, st, cursor, ua_ids):
     one_day = relativedelta(days=1)
     start_date = max_date + one_day
-    end_date = dt.today() - one_day
+    end_date = dt.today()
     while start_date.date() != end_date.date():
-        print(start_date)
+        # print(start_date)
         file_line = get_file_lines(st, start_date, ua_ids)
         if file_line == None:
             start_date += one_day
@@ -69,10 +69,10 @@ def update_st(max_date, st, cursor, ua_ids):
         start_date += one_day
         cols = file_line.split(';')
         insert_data(st, cursor, cols)
-        print()
+        # print()
 
 def insert_data(st, cursor, cols):
-    dt = dt_parser.parse(cols[1])# parse doesnt work correctly
+    dt_obj = dt.strptime(cols[1], "%d.%m.%Y")
     wind = float(cols[2])
     cloud = float(cols[7])
     tmin = float(cols[4])
@@ -84,8 +84,8 @@ def insert_data(st, cursor, cols):
     cursor.execute("""
         INSERT INTO {} 
         VALUES (?,?,?,?,?,?,?,?,?,?)
-        """.format(st), (None, dt, wind, cloud, t, tmin, tmax, pcp, s, hum))
-    print(None, dt, wind, cloud, t, tmin, tmax, pcp, s, hum)
+        """.format(st), (None, dt_obj, wind, cloud, t, tmin, tmax, pcp, s, hum))
+    # print(None, dt, wind, cloud, t, tmin, tmax, pcp, s, hum)
 
 def calc_hum(Td=15, t=15):
     rh = 100*(exp((17.625*Td)/(243.04+Td))/exp((17.625*t)/(243.04+t)))
@@ -94,11 +94,12 @@ def calc_hum(Td=15, t=15):
 def get_file_lines(st, date, ua_ids):
     file_name = compose_file_name(date)
     file_lines = []
-    print(file_name)
+    # print(file_name)
     try:
         f.retrlines("RETR ./" + file_name, callback=file_lines.append)
     # except correct exception if file not reachable
     except:
+        print(file_name)
         print("didnt reach")
         return None
     st_id = ua_ids[st]
