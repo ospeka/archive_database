@@ -39,13 +39,18 @@ def fill_cloud_gaps(st_data, st_distances, cursor):
 
 def get_data_to_fill(st_name, date, st_distances, cursor):
     i = 0
+    print(st_name)
+    print(date)
     while True:
+        print(i)
         nearest_st = find_nearest_st(st_name, st_distances, i=i)
+        print(nearest_st)
         res = cursor.execute("""
             SELECT cloud FROM {}
             WHERE dt=(?)
             """.format(nearest_st), (date,)).fetchall()
-        if all(res[0]):
+        print(res)
+        if all(res[0]) or res[0][0] == 0.0:
             break
         else:
             i += 1

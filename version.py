@@ -1,7 +1,19 @@
-from datetime import datetime as dt
+import sqlite3
+from pprint import pprint
 
-s = "01.01.2018"
+conn = sqlite3.connect("./db.sqlite")
+cursor = conn.cursor()
 
-dt_obj = dt.strptime(s, "%d.%m.%Y")
+tables = cursor.execute("""
+        SELECT name FROM sqlite_master WHERE type='table';
+    """).fetchall()
+tables = [el[0] for el in tables]
 
-print(dt_obj)
+pprint(tables)
+
+for table in tables:
+	res = cursor.execute("""
+		SELECT id,dt FROM {}
+		WHERE t='' or tmin='' or tmax=''
+		""".format(table)).fetchall()
+	print(res)

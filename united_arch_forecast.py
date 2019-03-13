@@ -14,11 +14,14 @@ irrad_file = "./forecast/Солнечная_радиация_станд_знач
 a = 0.4
 b = 0.38
 Cor_factor = 0.4
+start_date = datetime(year=2011, month=1, day=1)
+end_date = datetime.now().date()
+
 
 def main(stations='all'):
     con = sqlite3.connect(db_path)
     cursor = con.cursor()
-    # # check is directory empty
+    # check is directory empty
     stations = fc.create_stations()
     # pass stations here
     stations = fc.perform_calcs(stations)
@@ -82,8 +85,10 @@ def get_clouds_data_from_db(cursor, translit, stations_names):
         st_data['name'] = st_name
         st_data['alter_name'] = translited_name
         st_records = cursor.execute("""
-            SELECT dt, cloud from {} ORDER BY dt
-            """.format(translited_name)).fetchall()
+            SELECT dt, cloud from {}
+            WHERE dt >= (?) and dt < (?)
+            ORDER BY dt
+            """.format(translited_name), (str(start_date), str(end_date))).fetchall()
         st_data['data'] = st_records
         data.append(st_data)
     return data
@@ -122,8 +127,10 @@ def get_humdata_from_db(cursor, translit, stations_names):
         st_data['name'] = st_name
         st_data['alter_name'] = translited_name
         st_records = cursor.execute("""
-            SELECT dt, hum from {} ORDER BY dt
-            """.format(translited_name)).fetchall()
+            SELECT dt, hum from {}
+            WHERE dt >= (?) and dt < (?)
+            ORDER BY dt
+            """.format(translited_name), (str(start_date), str(end_date))).fetchall()
         st_data['data'] = st_records
         data.append(st_data)
     return data
@@ -162,8 +169,10 @@ def get_winddata_from_db(cursor, translit, stations_names):
         st_data['name'] = st_name
         st_data['alter_name'] = translited_name
         st_records = cursor.execute("""
-            SELECT dt, wind from {} ORDER BY dt
-            """.format(translited_name)).fetchall()
+            SELECT dt, wind from {}
+            WHERE dt >= (?) and dt < (?)
+            ORDER BY dt
+            """.format(translited_name), (str(start_date), str(end_date))).fetchall()
         st_data['data'] = st_records
         data.append(st_data)
     return data
@@ -187,6 +196,7 @@ def write_temp_from_db(temp_file, cursor, translit, stations_names):
             except IndexError:
                 print(st['name'])
                 print(i)
+            
             file.write("{:-05.1f}".format(float(max_temp)))
             file.write("{:-05.1f}".format(float(min_temp)))
         i += 1
@@ -201,8 +211,10 @@ def get_tempdata_from_db(cursor, translit, stations_names):
         st_data['name'] = st_name
         st_data['alter_name'] = translited_name
         st_records = cursor.execute("""
-            SELECT dt, tmax, tmin from {} ORDER BY dt
-            """.format(translited_name)).fetchall()
+            SELECT dt, tmax, tmin from {}
+            WHERE dt >= (?) and dt < (?)
+            ORDER BY dt
+            """.format(translited_name), (str(start_date), str(end_date))).fetchall()
         st_data['data'] = st_records
         data.append(st_data)
     return data
@@ -225,9 +237,9 @@ def write_pcp_from_db(pcp_file, cursor, translit, stations_names):
             except IndexError:
                 print(st['name'])
                 print(i)
-            if day_pcp is None:
+            if day_pcp is None or not day_pcp:
                 day_pcp = 0.0
-            file.write("{:05.1f}".format(day_pcp))
+            file.write("{:05.1f}".format(float(day_pcp)))
         i += 1
         file.write('\n')
 
@@ -240,8 +252,10 @@ def get_pcpdata_from_db(cursor, translit, stations_names):
         st_data['name'] = st_name
         st_data['alter_name'] = translited_name
         st_records = cursor.execute("""
-            SELECT dt, pcp from {} ORDER BY dt
-            """.format(translited_name)).fetchall()
+            SELECT dt, pcp from {}
+            WHERE dt >= (?) and dt < (?)
+            ORDER BY dt
+            """.format(translited_name), (str(start_date), str(end_date))).fetchall()
         st_data['data'] = st_records
         data.append(st_data)
     return data

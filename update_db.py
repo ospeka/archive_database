@@ -80,8 +80,8 @@ def download_data(city, cursor):
         SELECT MAX(dt) FROM {}
         """.format(city)).fetchall()[0][0]
     start_date = dp.parse(max_date)
-    end_date = dt.date.today()
     one_day = relativedelta(days=1)
+    end_date = dt.date.today() - one_day
     curr_date = start_date
     data_list = []
     city_ids = json.load(open("./city_ids.json", "r"))
