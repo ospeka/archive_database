@@ -46,12 +46,13 @@ def fill_gaps(cursor, st, st_distances):
     data_to_fill = None
     for gap_day in gap_days:
         data_to_fill = get_data_to_fill(st, cursor, gap_day, st_distances)
+        # remove id from request result this stupid way)
         data_to_fill = [el for el in data_to_fill[0][1:]]
         data_to_fill = tuple(data_to_fill)
         if data_to_fill is None:
             raise ValueError
         cursor.execute("""
-            INSERT INTO {}(dt, wind, cloud, t, tmin, tmax, pcp, s, hum)
+            INSERT INTO {} (dt, wind, cloud, t, tmin, tmax, pcp, s, hum)
             VALUES (?,?,?,?,?,?,?,?,?)
             """.format(st), data_to_fill)
 
