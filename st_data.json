@@ -1,0 +1,230 @@
+[
+  {
+    "alter_names": [],
+    "name": "Spas-Demensk",
+    "lat": 54.4,
+    "lon": 34.0,
+    "elev": 248,
+    "id_open_weather_map": 489868
+  },
+  {
+    "alter_names": [],
+    "name": "Yelnya",
+    "lat": 54.6,
+    "lon": 33.2,
+    "elev": 224,
+    "id_open_weather_map": 467753
+  },
+  {
+    "alter_names": [],
+    "name": "Zhizdra",
+    "lat": 53.7,
+    "lon": 34.7,
+    "elev": 200,
+    "id_open_weather_map": 462914
+  },
+  {
+    "alter_names": [],
+    "name": "Zhukovka",
+    "lat": 53.5,
+    "lon": 33.7,
+    "elev": 167,
+    "id_open_weather_map": 462822
+  },
+  {
+    "alter_names": [],
+    "name": "Bryansk",
+    "lat": 53.3,
+    "lon": 34.4,
+    "elev": 189,
+    "id_open_weather_map": 571476
+  },
+  {
+    "alter_names": [],
+    "name": "Karachev",
+    "lat": 53.1,
+    "lon": 35.0,
+    "elev": 197,
+    "id_open_weather_map": 552920
+  },
+  {
+    "alter_names": [],
+    "name": "Navlya",
+    "lat": 52.8,
+    "lon": 34.5,
+    "elev": 157,
+    "id_open_weather_map": 523186
+  },
+  {
+    "alter_names": [],
+    "name": "Unecha",
+    "lat": 52.8,
+    "lon": 32.7,
+    "elev": 210,
+    "id_open_weather_map": 479028
+  },
+  {
+    "alter_names": [],
+    "name": "Trubchevsk",
+    "lat": 52.5,
+    "lon": 33.8,
+    "elev": 164,
+    "id_open_weather_map": 572295
+  },
+  {
+    "alter_names": [],
+    "name": "Dmitrovsk-Orlovskiy",
+    "lat": 52.5,
+    "lon": 35.1,
+    "elev": 176,
+    "id_open_weather_map": 565908
+  },
+  {
+    "alter_names": [],
+    "name": "Druzhba",
+    "lat": 52.0,
+    "lon": 33.9,
+    "elev": 181,
+    "id_open_weather_map": 709584
+  },
+  {
+    "alter_names": [],
+    "name": "Fatezh",
+    "lat": 52.1,
+    "lon": 35.9,
+    "elev": 155,
+    "id_open_weather_map": 563300
+  },
+  {
+    "alter_names": [],
+    "name": "Semenivka",
+    "lat": 49.6,
+    "lon": 33.2,
+    "elev": 154,
+    "id_open_weather_map": 694603
+  },
+  {
+    "alter_names": [],
+    "name": "Shchors",
+    "lat": 51.8,
+    "lon": 31.9,
+    "elev": 116,
+    "id_open_weather_map": 694273
+  },
+  {
+    "alter_names": [
+      "Ponyri Vtoryye"
+    ],
+    "name": "Ponyri_Vtorye",
+    "lat": 52.3,
+    "lon": 36.2,
+    "elev": 224,
+    "id_open_weather_map": 506596
+  },
+  {
+    "alter_names": [],
+    "name": "Kursk",
+    "lat": 51.7,
+    "lon": 36.2,
+    "elev": 231,
+    "id_open_weather_map": 538560
+  },
+  {
+    "alter_names": [],
+    "name": "Korop",
+    "lat": 51.6,
+    "lon": 33.0,
+    "elev": 210,
+    "id_open_weather_map": 704915
+  },
+  {
+    "alter_names": [],
+    "name": "Tim",
+    "lat": 51.6,
+    "lon": 37.1,
+    "elev": 260,
+    "id_open_weather_map": 482986
+  },
+  {
+    "alter_names": [],
+    "name": "Kurchatov",
+    "lat": 51.7,
+    "lon": 35.7,
+    "elev": 147,
+    "id_open_weather_map": 538908
+  },
+  {
+    "alter_names": [],
+    "name": "Rylsk",
+    "lat": 51.6,
+    "lon": 34.7,
+    "elev": 176,
+    "id_open_weather_map": 695019
+  },
+  {
+    "alter_names": [],
+    "name": "Hlukhiv",
+    "lat": 51.7,
+    "lon": 33.9,
+    "elev": 127,
+    "id_open_weather_map": 707758
+  },
+  {
+    "alter_names": [],
+    "name": "Oboyan",
+    "lat": 51.2,
+    "lon": 36.3,
+    "elev": 250,
+    "id_open_weather_map": 516400
+  },
+  {
+    "alter_names": [],
+    "name": "Kursk",
+    "lat": 51.7,
+    "lon": 36.2,
+    "elev": 105,
+    "id_open_weather_map": 538560
+  },
+  {
+    "alter_names": [],
+    "name": "Konotop",
+    "lat": 51.2,
+    "lon": 33.2,
+    "elev": 133,
+    "id_open_weather_map": 705135
+  },
+  {
+    "alter_names": [],
+    "name": "Nizhyn",
+    "lat": 51.0,
+    "lon": 31.9,
+    "elev": 107,
+    "id_open_weather_map": 699942
+  },
+  {
+    "alter_names": [],
+    "name": "Sumy",
+    "lat": 50.9,
+    "lon": 34.8,
+    "elev": 150,
+    "id_open_weather_map": 692194
+  },
+  {
+    "alter_names": [],
+    "name": "Oster",
+    "lat": 51.0,
+    "lon": 30.9,
+    "elev": 109,
+    "id_open_weather_map": 698247
+  },
+  {
+    "alter_names": [
+      "Vyshegrad"
+    ],
+    "name": "Vyshhorod",
+    "lat": 50.5,
+    "lon": 29.9,
+    "elev": 50,
+    "id_open_weather_map": 688726
+  }
+]
