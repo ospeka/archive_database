@@ -1,3 +1,6 @@
+# Download and parse data from pgodklimat.ru
+# save it into json files
+
 import requests as r
 from bs4 import BeautifulSoup as bs
 from pprint import pprint

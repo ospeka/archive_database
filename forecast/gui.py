@@ -1,7 +1,7 @@
 from tkinter import *
 from tkinter import filedialog
 from tkinter import messagebox
-from .main import perform_all
+from .forecast import perform_all
 
 w = 800
 h = 250
