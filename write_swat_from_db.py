@@ -29,7 +29,6 @@ def main(stations='all'):
     con = sqlite3.connect(db_path)
     cursor = con.cursor()
     st_data = json.load(open(st_data_path, mode='r'))
-
     # stations = fc.create_stations()
     # stations = fc.perform_calcs(stations)
 

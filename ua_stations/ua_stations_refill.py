@@ -14,13 +14,6 @@ def main():
 	files = os.listdir(csvs_dir)
 	for file in files:
 		refill_table(file, cursor)
-	# dt = datetime(year=2000, month=1, day=5)
-	# resp = cursor.execute("""
-	# 	SELECT dt, pcp FROM Chernigiv
-	# 	WHERE dt >= (?)
-	# 	""", (dt,)).fetchall()
-	# pprint(resp[:10])
-
 	conn.commit()
 	conn.close()
 

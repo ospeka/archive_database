@@ -45,7 +45,6 @@ def write_up_data(data_to_append, files, write_up_dir):
     write_up_pcp(pcp_data, files['pcp_file'], write_up_dir)
 
 
-
 def write_up_pcp(pcp_data, pcp_file, write_up_dir):
     file = open(pcp_file, mode='a')
     for day_data in pcp_data:
