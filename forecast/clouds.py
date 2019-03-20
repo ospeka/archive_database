@@ -3,9 +3,10 @@ import csv
 from datetime import datetime
 import os
 
-irrad_file = './forecast/Солнечная_радиация_станд_значения.csv'
+irrad_file = '../forecast/Солнечная_радиация_станд_значения.csv'
 a = 0.4
 b = 0.38
+Cor_factor = 0.4
 
 
 def write_clouds(stations, dirpath):
@@ -48,6 +49,7 @@ def use_formula(station):
         q_zero = float(data[day.month][city_index])
         n = station.clouds[day]
         station.clouds[day] = round(q_zero * (1 - (a + b * n) * n), 3)
+        station.clouds[day] *= (1 + Cor_factor)
 
 
 def count_clouds(data, i):

@@ -1,19 +1,9 @@
-import sqlite3
+from datetime import datetime
 from pprint import pprint
 
-conn = sqlite3.connect("./db.sqlite")
-cursor = conn.cursor()
+first = datetime(year=2019, day=1, month=1)
+second = datetime(year=2019, day=1, month=2)
 
-tables = cursor.execute("""
-        SELECT name FROM sqlite_master WHERE type='table';
-    """).fetchall()
-tables = [el[0] for el in tables]
+l = [first, second]
 
-pprint(tables)
-
-for table in tables:
-	res = cursor.execute("""
-		SELECT id,dt FROM {}
-		WHERE t='' or tmin='' or tmax=''
-		""".format(table)).fetchall()
-	print(res)
+print(max(l))

@@ -2,7 +2,7 @@ import sqlite3
 import datetime as dt
 import dateutil.parser as dp
 from dateutil.relativedelta import relativedelta
-from csv_downloader import get_table, parse_table
+from json_downloader import get_table, parse_table
 import json
 from json_parser import get_city_data
 import os
