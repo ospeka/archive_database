@@ -18,46 +18,130 @@ def main():
     stations = fc.create_stations()
     stations = fc.perform_calcs(stations)
     files = get_files(directory)
+    pprint(files)
+    # for st in stations:
+        # print(st)
+    # writing avg between observation and forecast for today data
+    write_today(stations, files)
+    # writint forecast data from openweathermap
+    write_clouds(stations, files['slr_file'])
+    write_hum(stations, files['hum_file'])
+    write_pcp(stations, files['pcp_file'])
+    write_temp(stations, files['temp_file'])
+    write_wind(stations, files['wind_file'])
+
+
+def write_today(stations, files):
+    write_today_pcp(stations, files['pcp_file'])
+    write_today_hmd(stations, files['hum_file'])
+    write_today_slr(stations, files['slr_file'])
+    write_today_tmp(stations, files['temp_file'])
+    write_today_wind(stations, files['wind_file'])
+
+def write_today_wind(stations, wind_file):
+    file = open(wind_file, mode='r')
+    last_line = file.readlines()[-1]
+    file.close()
+    file = open(wind_file, mode='a')
+    write_date(last_line, file)
+    start_i = 7
     for st in stations:
-        print(st)
-    write_today(stations)
+        yesterday_wind = float(last_line[start_i:start_i + 8])
+        tommorow_date = min(st.wind.keys())
+        tommorow_wind = st.wind[tommorow_date]
+        avg_wind = (yesterday_wind + tommorow_wind) / 2
+        file.write("{:08.3f}".format(avg_wind))
+        start_i += 8
+    file.write("\n")
+    file.close()
 
-    # write_clouds(stations, files['slr_file'])
-    # write_hum(stations, files['hum_file'])
-    # write_pcp(stations, files['pcp_file'])
-    # write_temp(stations, files['temp_file'])
-    # write_wind(stations, files['wind_file'])
 
-def write_today(stations):
-    conn = sqlite3.connect(db_path)
-    cursor = conn.cursor()
-    translit = json.load(open(translit_path))
-    tables = cursor.execute("""
-        SELECT name FROM sqlite_master WHERE type='table';
-    """).fetchall()
-    tables = [el[0] for el in tables]
-    pcp_list = []
+def write_today_tmp(stations, temp_file):
+    file = open(temp_file, mode='r')
+    last_line = file.readlines()[-1]
+    file.close()
+    file = open(temp_file, mode='a')
+    write_date(last_line, file)
+    start_i = 7
     for st in stations:
-        pcp = count_avg_pcp(cursor, st, translit)
-        pcp_list.append(pcp)
+        yesterday_max_temp = float(last_line[start_i: start_i + 5])
+        yesterday_min_temp = float(last_line[start_i + 5: start_i + 10])
+        tommorow_date = min(st.temp.keys())
+        tommorow_max_temp = st.temp[tommorow_date]['max_temp']
+        tommorow_min_temp = st.temp[tommorow_date]['min_temp']
+        avg_max = (yesterday_max_temp + tommorow_max_temp) / 2
+        avg_min = (yesterday_min_temp + tommorow_min_temp) / 2
+        file.write("{:-05.1f}".format(avg_max))
+        file.write("{:-05.1f}".format(avg_min))
+        start_i += 10
+    file.write("\n")
+    file.close()
 
-    print(pcp_list)
+
+def write_today_slr(stations, slr_file):
+    file = open(slr_file, mode='r')
+    last_line = file.readlines()[-1]
+    file.close()
+    file = open(slr_file, mode='a')
+    write_date(last_line, file)
+    start_i = 7
+    for st in stations:
+        yesterday_slr = float(last_line[start_i:start_i + 8])
+        tommorow_date = min(st.clouds.keys())
+        tommorow_slr = st.clouds[tommorow_date]
+        avg_slr = (yesterday_slr + tommorow_slr) / 2
+        file.write("{:08.3f}".format(avg_slr))
+        start_i += 8
+    file.write("\n")
+    file.close()
 
 
-def count_avg_pcp(cursor, st, translit):
-    tommorow = min(st.pcp.keys())
-    tommorow_pcp = st.pcp[tommorow]
-    translited = translit[st.name]
-    two_days = timedelta(days=2)
-    yesterday = tommorow - two_days
-    print(yesterday)
-    print(type(yesterday))
-    print(translited)
-    yesterday_pcp = cursor.execute("""
-        SELECT pcp FROM {}
-        WHERE dt=(?)
-        """.format(translited), yesterday).fetchall()
-    return (yesterday_pcp + tommorow_pcp) / 2
+def write_today_hmd(stations, hum_file):
+    file = open(hum_file, mode='r')
+    last_line = file.readlines()[-1]
+    file.close()
+    file = open(hum_file, mode='a')
+    write_date(last_line, file)
+    start_i = 7
+    for st in stations:
+        yesterday_hmd = float(last_line[start_i:start_i + 8])
+        tommorow_date = min(st.hmd.keys())
+        tommorow_hmd = st.hmd[tommorow_date]
+        avg_hmd = (yesterday_hmd + tommorow_hmd) / 2
+        file.write("{:08.3f}".format(avg_hmd))
+        start_i += 8
+    file.write("\n")
+    file.close()
+
+
+def write_today_pcp(stations, pcp_file):
+    file = open(pcp_file, mode='r')
+    last_line = file.readlines()[-1]
+    file.close()
+    file = open(pcp_file, mode='a')
+    write_date(last_line, file)
+    start_i = 7
+    for st in stations:
+        yesterday_pcp = float(last_line[start_i:start_i + 5])
+        tommorow_date = min(st.pcp.keys())
+        tommorow_pcp = st.pcp[tommorow_date]
+        avg_pcp = (yesterday_pcp + tommorow_pcp) / 2
+        file.write("{:05.1f}".format(avg_pcp))
+        start_i += 5
+    file.write("\n")
+    file.close()
+
+
+def write_date(last_line, file):
+    year = int(last_line[:4])
+    day = int(last_line[4:7])
+    date = datetime(year=year, month=1, day=1)
+    days = timedelta(days=(day+1))
+    date += days
+    file.write(str(date.year))
+    first_jan = datetime(year=year, month=1, day=1)
+    delta = date - first_jan
+    file.write("{:03}".format(delta.days))
 
 
 def write_wind(stations, wind_file):
