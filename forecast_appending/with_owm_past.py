@@ -41,6 +41,8 @@ def write_today(stations):
         pcp = count_avg_pcp(cursor, st, translit)
         pcp_list.append(pcp)
 
+    print(pcp_list)
+
 
 def count_avg_pcp(cursor, st, translit):
     tommorow = min(st.pcp.keys())
@@ -48,10 +50,13 @@ def count_avg_pcp(cursor, st, translit):
     translited = translit[st.name]
     two_days = timedelta(days=2)
     yesterday = tommorow - two_days
+    print(yesterday)
+    print(type(yesterday))
+    print(translited)
     yesterday_pcp = cursor.execute("""
         SELECT pcp FROM {}
         WHERE dt=(?)
-        """.format(translited), (yesterday)).fetchall()[0][0]
+        """.format(translited), yesterday).fetchall()
     return (yesterday_pcp + tommorow_pcp) / 2
 
 
