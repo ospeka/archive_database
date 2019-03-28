@@ -112,7 +112,7 @@ def write_hum_from_db(hum_file, cursor, translit, stations_names):
         file.write("{}{:03}".format(year, delta.days + 1))
         for st in hum_data:
             try:
-                hum = st['data'][i][1] * 100
+                hum = st['data'][i][1]
             except IndexError:
                 print(st['name'])
                 print(i)
