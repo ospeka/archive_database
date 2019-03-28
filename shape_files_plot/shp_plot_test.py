@@ -1,13 +1,15 @@
-import geopandas
-import sys
+import shapely
 
-shp_file_path = "./Subbasins116.shp"
+# shp_file_path = "./Subbasins116.shp"
 
 def main():
-    # print(sys.version)
-    # cities = geopandas.read_file(shp_file_path)
-    # cities.plot()
-    print(sys.executable)
+	# lines = open("./output.sub", mode='r').readlines()
+	# for line in lines[9:9+116]:
+	# 	# read column mg/L
+	# 	record = float(line.split()[-4])
+	# 	print(record, ',', sep='')
+	pass
+
 
 
 if __name__ == "__main__":

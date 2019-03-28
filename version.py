@@ -1,9 +1,10 @@
-from datetime import datetime
-from pprint import pprint
+import matplotlib.pyplot as plt
 
-first = datetime(year=2019, day=1, month=1)
-second = datetime(year=2019, day=1, month=2)
+x = [el for el in range(100)]
+y = [xi ** 2 for xi in x]
 
-l = [first, second]
-
-print(max(l))
+fig, axes = plt.subplots(1,1)
+axes.plot(x, y)
+axes.legend(['Y(x)'])
+plt.show()
+print(type(axes))
