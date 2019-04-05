@@ -12,13 +12,14 @@ def main():
     for sub in subbasins:
         sub.plot(axes)
     count = 0
+    print('Subbasins count: ', len(subbasins))
     for sub in subbasins:
         if sub.one_pol:
             count += 1
             continue
         else:
             count += len(sub.pol)
-    print(count)
+    print('Polygons count: ', count)
 
     plt.show()
 
