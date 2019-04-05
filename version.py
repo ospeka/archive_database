@@ -9,4 +9,5 @@
 # plt.show()
 # print(type(axes))
 
-print(bool(''))
+print('' == True)
+print('' == False)
