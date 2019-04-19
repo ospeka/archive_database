@@ -84,7 +84,7 @@ def hover(event, annot, fig, ax, pathes, vals):
 				text +=  str(i)
 				index = pathes.index(path)
 		annot.set_text(text + ": " + str(vals[index]))
-		# redraw graf to change annotation. :(
+		# redraw graf to change annotation positiion. :(
 		fig.canvas.draw_idle()
 
 
