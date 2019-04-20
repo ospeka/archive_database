@@ -35,7 +35,8 @@ def set_up_dict(col_names):
     subbasin['mg/L 2'] = []
     return subbasin
 
-def get_vals():
+
+def get_vals(start_date=False, end_date=False, col_name, subbasins):
     pass
 
 if __name__ == '__main__':

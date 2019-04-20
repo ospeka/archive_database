@@ -1,3 +1,7 @@
+import sys
+sys.path.append('../')
+
+import 
 import shapefile as shp
 from pprint import pprint
 import matplotlib.pyplot as plt
@@ -26,7 +30,7 @@ def main():
 	
 	# ploting and addit to pols and colors return of plotting
 	pols = []
-	vals = [round(uniform(0, 1), 3) for _ in range(len(sub_names))]
+	vals = get_vals()
 	colors_cm = []
 	for shape, val in zip(shapes, vals):
 		points = shape.points
