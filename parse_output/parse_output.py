@@ -1,6 +1,7 @@
 # path to output file
 p = "./output.sub"
 
+
 def parse_output(path):
     file = open(path, mode='r')
     lines = file.readlines()
@@ -20,7 +21,7 @@ def parse_output(path):
                 if col_name == 'mg/L':
                     flag = 1
                 subbasins[i][col_name].append(float(meas))
-            except:
+            except ValueError:
                 subbasins[i][col_name].append(meas)
         i += 1
         if i == 116:
@@ -36,8 +37,15 @@ def set_up_dict(col_names):
     return subbasin
 
 
-def get_vals(start_date=False, end_date=False, col_name, subbasins):
-    pass
+def get_vals(col_name, subbasins, start_date=False, end_date=False, day=1):
+    if not start_date and not end_date:
+        vals = []
+        for subbasin in subbasins:
+            vals.append(subbasin[col_name][day - 1])
+        return vals
+    if start_date and end_date:
+        pass
+
 
 if __name__ == '__main__':
     parse_output(p)
