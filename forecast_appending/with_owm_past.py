@@ -4,7 +4,7 @@
 import sys
 sys.path.append('../')
 import forecast.forecast as fc
-from from_past_year import get_files
+from forecast_appending.from_past_year import get_files
 from pprint import pprint
 from datetime import datetime, timedelta
 import sqlite3
@@ -14,11 +14,10 @@ directory = "../SWAT_united_test"
 db_path = "../db.sqlite"
 translit_path = "../city_translit.json"
 
-def main():
+def with_owm_past(directory):
     stations = fc.create_stations()
     stations = fc.perform_calcs(stations)
     files = get_files(directory)
-    pprint(files)
     # for st in stations:
         # print(st)
     # writing avg between observation and forecast for today data
@@ -211,4 +210,4 @@ def write_clouds(stations, slr_file):
 
 
 if __name__ == '__main__':
-    main()
+    with_owm_past(directory)

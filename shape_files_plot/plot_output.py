@@ -1,6 +1,6 @@
 import shapefile as shp
 from pprint import pprint
-import matplotlib.pyplot as plt
+from matplotlib.figure import Figure
 # from random import uniform
 from matplotlib.path import Path
 import matplotlib.colors as mcolors
@@ -14,10 +14,10 @@ output_sub = "../parse_output/output.sub"
 
 
 def main():
-    col_name = 'CHOLAmic/LCBODU'
+    col_name = 'PETmm'
     subbasins = parse_output(output_sub)
     vals = get_vals(col_name, subbasins, day=5)
-    pprint(vals)
+    # pprint(vals)
     plot_output(vals, col_name)
 
 
@@ -29,7 +29,8 @@ def plot_output(values, col_name):
     # sub_names = names = [el.record[22][:-4] for el in sf.shapeRecords()]
     # print("Num of shapes: ", len(shapes))
     # create fig and axes
-    fig, ax = plt.subplots(1, 1)
+    fig = Figure()
+    ax = fig.add_subplot(111)
     ax.set_title(col_name)
     fig.canvas.set_window_title('Visualization')
     # random colors list. leave it just for tests
@@ -78,7 +79,7 @@ def plot_output(values, col_name):
     fig.canvas.mpl_connect("motion_notify_event",
         lambda event: hover(event, annot, fig, ax, pathes, values))
 
-    plt.show()
+    # plt.show()
 
 
 def hover(event, annot, fig, ax, pathes, values):

@@ -18,7 +18,7 @@ a = 0.4
 b = 0.38
 Cor_factor = 0.4
 
-def main():
+def from_past_year(directory):
     files = get_files(directory)
     pprint(files)
     conn = sqlite3.connect(db_path)
@@ -283,4 +283,4 @@ def get_files(directory):
 
 
 if __name__ == '__main__':
-    main()
+    from_past_year(directory)

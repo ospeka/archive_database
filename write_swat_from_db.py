@@ -12,11 +12,11 @@ import dateutil.parser as dt_parser
 from datetime import datetime
 import csv
 
-db_path = "./db.sqlite"
+db_path = "../db.sqlite"
 dirpath = "./SWAT_united_test"
-st_data_path = "./st_data.json"
-city_translit = "./city_translit.json"
-irrad_file = "./forecast/Солнечная_радиация_станд_значения.csv"
+st_data_path = "../st_data.json"
+city_translit = "../city_translit.json"
+irrad_file = "../forecast/Солнечная_радиация_станд_значения.csv"
 a = 0.4
 b = 0.38
 Cor_factor = 0.4
@@ -24,7 +24,7 @@ start_date = datetime(year=2011, month=1, day=1)
 end_date = datetime.now().date()
 
 
-def main(stations='all'):
+def write_swat_from_db(dirpath):
     # update db before run this file!!!
     con = sqlite3.connect(db_path)
     cursor = con.cursor()
@@ -353,4 +353,4 @@ def write_wind_header(stations, dirpath):
 
 
 if __name__ == '__main__':
-    main()
+    write_swat_from_db(dirpath)
