@@ -4,6 +4,14 @@ from tkinter import messagebox
 import shapefile as shp
 import os
 import sys
+import matplotlib
+matplotlib.use('TkAgg')
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+from matplotlib.figure import Figure
+from matplotlib.path import Path
+import matplotlib.colors as mcolors
+import matplotlib.cm as cm
+
 sys.path.append("../")
 
 from forecast_appending.with_owm_past import with_owm_past
@@ -13,10 +21,11 @@ from write_swat_from_db import write_swat_from_db
 from shape_files_plot.plot_output import plot_output
 from parse_output.parse_output import get_vals, parse_output
 
+
+
 w = 800
 h = 600
 swat_path = ""
-
 
 class MyFrame(Tk):
     """Class for main window"""
@@ -74,12 +83,98 @@ class MyFrame(Tk):
         go_to_viz_butt.grid(padx=275, pady=45)
 
     def plot_output(self):
+        plot_window = Toplevel(self)
+        plot_window.title("Visualization window")
+        sw = self.winfo_screenwidth()
+        sh = self.winfo_screenheight()
+        x = (sw / 2) - (w / 2) + 100
+        y = (sh / 2) - (h / 2) + 100
+        plot_window.geometry("%dx%d+%d+%d" % (w, h, x, y))
+        sf = self._get_shapefile()
+        
+        parsed_output = parse_output(swat_path + '/output.sub')
+        col_names = list(parsed_output[0].keys())
+
+        variable = StringVar(plot_window)
+        variable.set("Select column of output file")
+        select_column = OptionMenu(plot_window, variable,
+            *col_names)
+        select_column.pack(anchor="w")
+
+        fig = Figure(figsize=(8, 8))
+        ax = fig.add_subplot(111)
+        ax.set_facecolor((1.0, 0.47, 0.42))
+        canvas = FigureCanvasTkAgg(fig, master=plot_window)
+        plot_button = Button(plot_window, text="Plot graph",
+        command=lambda: self.plot_graph(fig, ax, plot_window, variable, parsed_output, sf, canvas))
+        plot_button.pack()
+        canvas.get_tk_widget().pack()
+        
+
+        # canvas = FigureCanvasTkAgg(fig, master=plot_window)
+        # canvas.get_tk_widget().pack()
+        # canvas.draw()
+
+
+    def plot_graph(self, fig, ax, plot_window, variable, parsed_output, sf, canvas):
+        shapes = sf.shapes()
+        col_name = variable.get()
+        ax.set_title(col_name)
+        vals = get_vals(col_name, parsed_output, day=1)
+
+        pols = []
+        colors_cm = []
+        diff = max(vals) - min(vals)
+        if diff == 0:
+            messagebox.showerror("Error", "min and max value of column are equal")
+            return
+        norm_values = [(val - min(vals)) / diff for val in vals]
+        for shape, val in zip(shapes, norm_values):
+            points = shape.points
+            x = [el[0] for el in points]
+            y = [el[1] for el in points]
+            color_val = 1 - val
+            rgb = color_val, color_val, 0.9
+            colors_cm.append(rgb)
+            ax.fill(x, y, color=rgb)
+            ax.plot(x, y, color=(1.0, 0.47, 0.42), linewidth=0.5)
+            path_inp = [[xi, yi] for xi, yi in zip(x, y)]
+            pols.append(path_inp)
+        pathes = [Path(el) for el in pols]
+        colors_cm = sort_colors(colors_cm)
+        mycmp = mcolors.LinearSegmentedColormap.from_list(name='custom',
+        colors=colors_cm, N=10)
+        normalize = mcolors.Normalize(vmin=min(vals), vmax=max(vals))
+        scalarmappaple = cm.ScalarMappable(norm=normalize, cmap=mycmp)
+        scalarmappaple.set_array(vals)
+
+        flag = 0
+        try:
+            cb_axes = fig.axes[1]
+        except IndexError:
+            flag = 1
+        if flag == 0:
+            cb = fig.colorbar(scalarmappaple, cax=fig.axes[1])
+        else:
+            cb = fig.colorbar(scalarmappaple)
+
+        annot = ax.annotate("", xy=(350000, 5800000),
+        bbox=dict(boxstyle="round", fc="w"))
+        annot.set_visible(False)
+        fig.canvas.mpl_connect("motion_notify_event",
+        lambda event: hover(event, annot, fig, ax, pathes, vals))
+
+        canvas.draw()
+
+
+    def _get_shapefile(self):
         dir_content = os.listdir(swat_path)
         shp_file = ""
         for el in dir_content:
             if el.endswith('.shp'):
                 shp_file = el
         sf = shp.Reader(swat_path + '/' + shp_file)
+        return sf
         
 
 
@@ -89,6 +184,20 @@ class MyFrame(Tk):
         global swat_path
         swat_path = dirname
         swat_dir_label['text'] = "SWAT Directory path:" + dirname
+
+def hover(event, annot, fig, ax, pathes, values):
+    if event.inaxes == ax:
+        x, y = round(event.xdata, 1), round(event.ydata, 1)
+        text = ''
+        annot.set_position((x + 5000, y + 5000))
+        annot.set_visible(True)
+        index = 0
+        for path, i in zip(pathes, range(1, 117)):
+            if path.contains_point([x, y]):
+                text += str(i)
+                index = pathes.index(path)
+        annot.set_text(text + ": " + str(values[index]))
+        fig.canvas.draw_idle()
 
 
 def update_db(upd_db_fr):
@@ -113,7 +222,19 @@ def perform_modeling(option):
         print("with owm path done")
         return
 
-
+def sort_colors(colors):
+    # super hard to understand function that sort sort colors
+    # for my own colorbar
+    d = {k: v for k, v in zip(colors, range(len(colors)))}
+    d_sums = {sum(k): v for k, v in d.items()}
+    sorted_sums = list(d_sums.keys())
+    sorted_sums = sorted(sorted_sums)
+    good_order = [d_sums[el] for el in sorted_sums]
+    ret = []
+    d_reversed = {v: k for k, v in d.items()}
+    for ind in good_order:
+        ret.append(d_reversed[ind])
+    return ret[::-1]
 
 def main():
     root = MyFrame()
