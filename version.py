@@ -1,13 +1,7 @@
-# import matplotlib.pyplot as plt
+import subprocess
+import os
 
-# x = [el for el in range(100)]
-# y = [xi ** 2 for xi in x]
+s = "D:/Projects/swat_executing_test/swat_model_dir/rev670_64rel.exe"
 
-# fig, axes = plt.subplots(1,1)
-# axes.plot(x, y)
-# axes.legend(['Y(x)'])
-# plt.show()
-# print(type(axes))
-
-print('' == True)
-print('' == False)
+# subprocess.call(s)
+os.system(s)

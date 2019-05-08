@@ -282,7 +282,7 @@ def write_headers(st_data, dirpath):
 def write_pcp_header(st_data, dirpath):
     if os.sep != '/':
         dirpath = dirpath.replace('/', os.sep)
-    file = open(os.path.join(dirpath, "pcp.pcp"), "w+")
+    file = open(os.path.join(dirpath, "pcp1.pcp"), "w+")
     file.write("Stations  ")
     for st in st_data:
         file.write(st["name"] + "_PCP,")
@@ -300,7 +300,7 @@ def write_pcp_header(st_data, dirpath):
         file.write(str(st["elev"]) + "  ")
     file.write('\n')
     file.close()
-    return os.path.join(dirpath, "pcp.pcp")
+    return os.path.join(dirpath, "pcp1.pcp")
 
 
 def write_clouds_header(st_data, dirpath):
@@ -323,7 +323,7 @@ def write_hum_header(st_data, dirpath):
 def write_temp_header(st_data, dirpath):
     if (os.sep != '/'):
         dirpath = dirpath.replace('/', os.sep)
-    file = open(os.path.join(dirpath, "Tmp.tmp"), "w+")
+    file = open(os.path.join(dirpath, "Tmp1.tmp"), "w+")
     file.write("Stations  ")
     for st in st_data:
         file.write(st["name"] + "_TMP,")
@@ -341,7 +341,7 @@ def write_temp_header(st_data, dirpath):
         file.write(str(st["elev"]) + "  ")
     file.write('\n')
     file.close()
-    return os.path.join(dirpath, "Tmp.tmp")
+    return os.path.join(dirpath, "Tmp1.tmp")
 
 
 def write_wind_header(stations, dirpath):

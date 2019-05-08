@@ -26,6 +26,8 @@ from parse_output.parse_output import get_vals, parse_output
 w = 800
 h = 600
 swat_path = ""
+swate_exe_name = "rev670_64rel.exe"
+
 
 class MyFrame(Tk):
     """Class for main window"""
@@ -177,8 +179,6 @@ class MyFrame(Tk):
         return sf
         
 
-
-
     def getDir(self, swat_dir_label):
         dirname = filedialog.askdirectory()
         global swat_path
@@ -212,6 +212,7 @@ def perform_modeling(option):
         write_swat_from_db(swat_path)
         print("from past year")
         from_past_year(swat_path)
+        execute_swat(swat_path)
         return
 
     if option == "with owm past":
@@ -220,7 +221,13 @@ def perform_modeling(option):
         print("write_swat_from_db done")
         with_owm_past(swat_path)
         print("with owm path done")
+        execute_swat(swat_path)
         return
+
+def execute_swat(path):
+    swat_exe_path = path + "/" + swate_exe_name
+    print(swat_exe_path)
+    os.system(swat_exe_path)
 
 def sort_colors(colors):
     # super hard to understand function that sort sort colors

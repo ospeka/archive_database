@@ -274,7 +274,7 @@ def get_files(directory):
         if ".slr" in file_name:
             files['slr_file'] = os.path.join(directory, file_name)
             continue
-        if ".tmp" in file_name:
+        if ".Tmp" in file_name:
             files['temp_file'] = os.path.join(directory, file_name)
             continue
         if ".wnd" in file_name:
