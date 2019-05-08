@@ -1,5 +1,18 @@
+from pprint import pprint
 # path to output file
 p = "./output.sub"
+
+num_of_subbasins = 116
+
+def main():
+    file = open(p, mode='r')
+    lines = file.readlines()
+    data_lines = lines[9:]
+    col_names = lines[8].split()
+    pprint(col_names)
+    print(len(col_names))
+    print(len(data_lines[0].split()))
+
 
 
 def parse_output(path):
@@ -8,7 +21,7 @@ def parse_output(path):
     data_lines = lines[9:]
     col_names = lines[8].split()
 
-    subbasins = [set_up_dict(col_names) for _ in range(116)]
+    subbasins = [set_up_dict(col_names) for _ in range(num_of_subbasins)]
     i = 0
     flag = 0
     for line in data_lines:
@@ -48,4 +61,5 @@ def get_vals(col_name, subbasins, start_date=False, end_date=False, day=1):
 
 
 if __name__ == '__main__':
-    parse_output(p)
+    main()
+    # parse_output(p)

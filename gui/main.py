@@ -223,7 +223,6 @@ def get_update_status():
     """).fetchall()
     table_names = [el[0] for el in table_names_res]
     tommorow = dt.date.today() - dt.timedelta(days=1)
-    print(tommorow)
     for name in table_names:
         res = cursor.execute("""
             SELECT max(dt) FROM {}
@@ -231,7 +230,6 @@ def get_update_status():
         max_dt = parser.parse(res[0][0]).date()
         if tommorow != max_dt:
             return "Update needed!"
-        print(max_dt)
     return "Update doesn't needed."
     
 
