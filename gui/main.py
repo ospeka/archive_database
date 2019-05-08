@@ -5,6 +5,9 @@ import shapefile as shp
 import os
 import sys
 import matplotlib
+import sqlite3
+import datetime as dt
+from dateutil import parser
 matplotlib.use('TkAgg')
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.figure import Figure
@@ -20,14 +23,18 @@ from write_swat_from_db import write_swat_from_db
 
 from shape_files_plot.plot_output import plot_output
 from parse_output.parse_output import get_vals, parse_output
-
-
+import update_db
+from ua_stations.ua_st_update import ua_st_update
+import update_db as upd_ru_db
 
 w = 800
 h = 600
 swat_path = ""
 swate_exe_name = "rev670_64rel.exe"
-
+db_path = "../db.sqlite"
+ua_ids = "../ua_stations/ua_ids.json"
+city_ids_path = "../city_ids.json"
+update_data_dir = "../update_data/"
 
 class MyFrame(Tk):
     """Class for main window"""
@@ -54,9 +61,10 @@ class MyFrame(Tk):
         start_modeling_fr.grid(row=3, sticky='ew')
         go_to_viz_fr.grid(row=4, sticky='ew')
 
-        upd_db_butt = Button(upd_db_fr, text="check db update", width=20,
+        upd_db_butt = Button(upd_db_fr, text="Update database", width=20,
                             command=lambda: update_db(upd_db_fr))
-        upd_label = Label(upd_db_fr, text="Update status: nothing to update.")
+        update_status = get_update_status()
+        upd_label = Label(upd_db_fr, text=update_status)
         upd_db_butt.grid(row=0, column=0, pady=45)
         upd_label.grid(row=0, column=1, padx=50)
 
@@ -103,13 +111,21 @@ class MyFrame(Tk):
             *col_names)
         select_column.pack(anchor="w")
 
+        value_box_var = StringVar()
+        value_box = Entry(plot_window, textvariable=value_box_var)
+        value_box.insert(0, "Here will be value.")
+        value_box.configure(state='readonly')
+
+
         fig = Figure(figsize=(8, 8))
         ax = fig.add_subplot(111)
         ax.set_facecolor((1.0, 0.47, 0.42))
         canvas = FigureCanvasTkAgg(fig, master=plot_window)
         plot_button = Button(plot_window, text="Plot graph",
-        command=lambda: self.plot_graph(fig, ax, plot_window, variable, parsed_output, sf, canvas))
+        command=lambda: self.plot_graph(fig, ax, plot_window,
+            variable, parsed_output, sf, canvas, value_box, value_box_var))
         plot_button.pack()
+        value_box.pack()
         canvas.get_tk_widget().pack()
         
 
@@ -118,9 +134,11 @@ class MyFrame(Tk):
         # canvas.draw()
 
 
-    def plot_graph(self, fig, ax, plot_window, variable, parsed_output, sf, canvas):
+    def plot_graph(self, fig, ax, plot_window, variable, parsed_output, sf, canvas, value_box, value_box_var):
         shapes = sf.shapes()
         col_name = variable.get()
+        if col_name == 'Select column of output file':
+            return
         ax.set_title(col_name)
         vals = get_vals(col_name, parsed_output, day=1)
 
@@ -160,13 +178,25 @@ class MyFrame(Tk):
         else:
             cb = fig.colorbar(scalarmappaple)
 
-        annot = ax.annotate("", xy=(350000, 5800000),
-        bbox=dict(boxstyle="round", fc="w"))
-        annot.set_visible(False)
-        fig.canvas.mpl_connect("motion_notify_event",
-        lambda event: hover(event, annot, fig, ax, pathes, vals))
+        fig.canvas.mpl_connect('button_press_event',
+            lambda event: self.onclick(event, fig, ax, pathes, vals, value_box, value_box_var))
 
         canvas.draw()
+
+    def onclick(self, event, fig, ax, pathes, values, value_box, value_box_var):
+        if event.inaxes == ax:
+            x, y = round(event.xdata, 1), round(event.ydata, 1)
+            text = ''
+            index = -1
+            for path, i in zip(pathes, range(1, 117)):
+                if path.contains_point([x, y]):
+                    text += str(i)
+                    index = pathes.index(path)
+            text += ": " + str(values[index])
+            if index == -1:
+                text = "Not a subbasin."
+            value_box_var.set(text)
+            value_box.insert(0, text)
 
 
     def _get_shapefile(self):
@@ -185,24 +215,31 @@ class MyFrame(Tk):
         swat_path = dirname
         swat_dir_label['text'] = "SWAT Directory path:" + dirname
 
-def hover(event, annot, fig, ax, pathes, values):
-    if event.inaxes == ax:
-        x, y = round(event.xdata, 1), round(event.ydata, 1)
-        text = ''
-        annot.set_position((x + 5000, y + 5000))
-        annot.set_visible(True)
-        index = 0
-        for path, i in zip(pathes, range(1, 117)):
-            if path.contains_point([x, y]):
-                text += str(i)
-                index = pathes.index(path)
-        annot.set_text(text + ": " + str(values[index]))
-        fig.canvas.draw_idle()
+def get_update_status():
+    con = sqlite3.connect('../db.sqlite')
+    cursor = con.cursor()
+    table_names_res = cursor.execute("""
+        SELECT name FROM sqlite_master WHERE type='table';
+    """).fetchall()
+    table_names = [el[0] for el in table_names_res]
+    tommorow = dt.date.today() - dt.timedelta(days=1)
+    print(tommorow)
+    for name in table_names:
+        res = cursor.execute("""
+            SELECT max(dt) FROM {}
+            """.format(name)).fetchall()
+        max_dt = parser.parse(res[0][0]).date()
+        if tommorow != max_dt:
+            return "Update needed!"
+        print(max_dt)
+    return "Update doesn't needed."
+    
 
 
 def update_db(upd_db_fr):
-    print(upd_db_fr)
-    print("updating db")
+    # ua_st_update(db_path, ua_ids)
+    upd_ru_db.update_db(db_path, city_ids_path, update_data_dir)
+    
 
 
 def perform_modeling(option):
@@ -227,7 +264,8 @@ def perform_modeling(option):
 def execute_swat(path):
     swat_exe_path = path + "/" + swate_exe_name
     print(swat_exe_path)
-    os.system(swat_exe_path)
+    print("swat execution ...")
+    # os.system(swat_exe_path)
 
 def sort_colors(colors):
     # super hard to understand function that sort sort colors

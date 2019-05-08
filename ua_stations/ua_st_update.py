@@ -35,12 +35,12 @@ ua_stations = [
 ]
 
 
-def main():
+def ua_st_update(db_path, ua_ids_path):
     conn = sqlite3.connect(db_path)
     cursor = conn.cursor()
     ua_ids = json.load(open(ua_ids_path, mode='r'))
     for st in ua_stations:
-        print(st)
+        # print(st)
         max_date = get_max_date(st, cursor)
         update_st(max_date, st, cursor, ua_ids)
 
@@ -101,8 +101,8 @@ def get_file_lines(st, date, ua_ids):
         f.retrlines("RETR ./" + file_name, callback=file_lines.append)
     # except correct exception if file not reachable
     except:
-        # print(file_name)
-        # print("didnt reach")
+        print(file_name)
+        print("didnt reach")
         return None
     st_id = ua_ids[st]
     for line in file_lines:
@@ -127,4 +127,4 @@ def compose_file_name(date):
 
 
 if __name__ == '__main__':
-    main()
+    ua_st_update(db_path, ua_ids_path)

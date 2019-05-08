@@ -1,3 +1,4 @@
+# updating from pogodaklimat site
 import sqlite3
 import datetime as dt
 import dateutil.parser as dp
@@ -35,17 +36,19 @@ cities = [
     "Zhizdra",
     "Zhukovka"
 ]
-
+db_path = "./db.sqlite"
+city_ids_path = "./city_ids.json"
+update_data_dir = "./update_data/"
 
 def main():
-    update_db()
+    update_db(db_path, city_ids_path, update_data_dir)
 
 
-def update_db():
-    con = sqlite3.connect('./db.sqlite')
+def update_db(db_path, city_ids_path, update_data_dir):
+    con = sqlite3.connect(db_path)
     cursor = con.cursor()
     for city in cities:
-        path = download_data(city, cursor)
+        path = download_data(city, cursor, city_ids_path, update_data_dir)
         if path is None:
             print("Update for ", city, " doesnt need.")
             continue
@@ -68,7 +71,7 @@ def insert_update(data, city_name, cursor):
     print("Update done.")
 
 
-def download_data(city, cursor):
+def download_data(city, cursor, city_ids_path, update_data_dir):
     """
     download data and save it in json file
     with path = "./update_data./upd_data.json"
@@ -84,7 +87,7 @@ def download_data(city, cursor):
     end_date = dt.date.today() - one_day
     curr_date = start_date
     data_list = []
-    city_ids = json.load(open("./city_ids.json", "r"))
+    city_ids = json.load(open(city_ids_path, "r"))
     data_list.append({'city': city, 'city_id': city_ids[city]})
     if compare_date(curr_date, end_date):
         return None
@@ -100,7 +103,7 @@ def download_data(city, cursor):
         data['date'].append({'year': get_params["ayear"]})
         data['year'] = str(curr_date.year)
         data_list.append(data)
-    path = "./update_data/" + city + "_upd_data.json"
+    path = update_data_dir + city + "_upd_data.json"
     with open(path, 'w+') as fout:
         json.dump(data_list, fout)
     return path
