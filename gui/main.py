@@ -61,10 +61,15 @@ class MyFrame(Tk):
         start_modeling_fr.grid(row=3, sticky='ew')
         go_to_viz_fr.grid(row=4, sticky='ew')
 
-        upd_db_butt = Button(upd_db_fr, text="Update database", width=20,
-                            command=lambda: update_db(upd_db_fr))
         update_status = get_update_status()
-        upd_label = Label(upd_db_fr, text=update_status)
+        update_status_var = StringVar()
+        update_status_var.set(update_status)
+        upd_label = Label(upd_db_fr, textvariable=update_status_var)
+
+        upd_db_butt = Button(upd_db_fr, text="Update database", width=20,
+                            command=lambda: update_db(upd_label, update_status_var))
+
+        
         upd_db_butt.grid(row=0, column=0, pady=45)
         upd_label.grid(row=0, column=1, padx=50)
 
@@ -235,9 +240,15 @@ def get_update_status():
     
 
 
-def update_db(upd_db_fr):
+def update_db(upd_label, update_status_var):
     # ua_st_update(db_path, ua_ids)
-    upd_ru_db.update_db(db_path, city_ids_path, update_data_dir)
+    ret = upd_ru_db.update_db(db_path, city_ids_path, update_data_dir)
+    print(ret)
+    if not ret:
+        update_status_var.set("Update doesn't needed.")
+    else:
+        update_status_var.set("Update done.")
+
     
 
 

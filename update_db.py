@@ -34,7 +34,18 @@ cities = [
     "Trubchevsk",
     "Unecha",
     "Zhizdra",
-    "Zhukovka"
+    "Zhukovka",
+    "Chernigiv",
+    "Druzhba",
+    "Gluchiv",
+    "Konotop",
+    "Nizhin",
+    "Oster",
+    "Pokoshichi",
+    "Semenivka",
+    "Shchors",
+    "Sumi",
+    "Vishgorod"
 ]
 db_path = "./db.sqlite"
 city_ids_path = "./city_ids.json"
@@ -47,6 +58,7 @@ def main():
 def update_db(db_path, city_ids_path, update_data_dir):
     con = sqlite3.connect(db_path)
     cursor = con.cursor()
+    at_least_one_uppdate_done = False
     for city in cities:
         path = download_data(city, cursor, city_ids_path, update_data_dir)
         if path is None:
@@ -59,8 +71,10 @@ def update_db(db_path, city_ids_path, update_data_dir):
         else:
             print("Error: %s file not found" % path)
         insert_update(city_data, city_name, cursor)
+        at_least_one_uppdate_done = True
     con.commit()
     con.close()
+    return at_least_one_uppdate_done
 
 
 def insert_update(data, city_name, cursor):
