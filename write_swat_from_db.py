@@ -323,7 +323,7 @@ def write_hum_header(st_data, dirpath):
 def write_temp_header(st_data, dirpath):
     if (os.sep != '/'):
         dirpath = dirpath.replace('/', os.sep)
-    file = open(os.path.join(dirpath, "Tmp1.tmp"), "w+")
+    file = open(os.path.join(dirpath, "Tmp1.Tmp"), "w+")
     file.write("Stations  ")
     for st in st_data:
         file.write(st["name"] + "_TMP,")
@@ -341,7 +341,7 @@ def write_temp_header(st_data, dirpath):
         file.write(str(st["elev"]) + "  ")
     file.write('\n')
     file.close()
-    return os.path.join(dirpath, "Tmp1.tmp")
+    return os.path.join(dirpath, "Tmp1.Tmp")
 
 
 def write_wind_header(stations, dirpath):

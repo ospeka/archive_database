@@ -85,10 +85,15 @@ class MyFrame(Tk):
             "from past year", "with owm past")
         select_type_of_inp_files.grid(row=0, column=0, padx=300, pady=45)
 
-        start_modeling_butt = Button(start_modeling_fr, text="Start modeling", width=20,
-                                    command=lambda: perform_modeling(variable.get()))
+        modeling_status_var = StringVar()
+        modeling_status_var.set("Modeling status: modeling didn't started.")
         modeling_status_label = Label(start_modeling_fr,
-            text="Modeling status: modeling didn't started.")
+            textvariable=modeling_status_var)
+
+        start_modeling_butt = Button(start_modeling_fr, text="Start modeling", width=20,
+                                    command=lambda: perform_modeling(variable.get(), modeling_status_var))
+        
+
         start_modeling_butt.grid(row=0, column=0, pady=45)
         modeling_status_label.grid(row=0, column=1, padx=50)
 
@@ -243,16 +248,13 @@ def get_update_status():
 def update_db(upd_label, update_status_var):
     # ua_st_update(db_path, ua_ids)
     ret = upd_ru_db.update_db(db_path, city_ids_path, update_data_dir)
-    print(ret)
     if not ret:
         update_status_var.set("Update doesn't needed.")
     else:
         update_status_var.set("Update done.")
 
-    
 
-
-def perform_modeling(option):
+def perform_modeling(option, modeling_status_var):
     print(option)
     if option == "from past year":
         print(swat_path)
@@ -260,6 +262,7 @@ def perform_modeling(option):
         print("from past year")
         from_past_year(swat_path)
         execute_swat(swat_path)
+        modeling_status_var.set("Modeling status: modeling done.")
         return
 
     if option == "with owm past":
@@ -269,6 +272,7 @@ def perform_modeling(option):
         with_owm_past(swat_path)
         print("with owm path done")
         execute_swat(swat_path)
+        modeling_status_var.set("Modeling status: modeling done.")
         return
 
 def execute_swat(path):
