@@ -146,7 +146,7 @@ class MyFrame(Tk):
         colors_cm = []
         diff = max(vals) - min(vals)
         if diff == 0:
-            messagebox.showerror("Error", "min and max value of column are equal")
+            messagebox.showerror("Error", "min and max value of column are equal\n or all values are equal")
             return
         norm_values = [(val - min(vals)) / diff for val in vals]
         for shape, val in zip(shapes, norm_values):
@@ -215,6 +215,7 @@ class MyFrame(Tk):
         swat_path = dirname
         swat_dir_label['text'] = "SWAT Directory path:" + dirname
 
+
 def get_update_status():
     con = sqlite3.connect('../db.sqlite')
     cursor = con.cursor()
@@ -266,7 +267,7 @@ def execute_swat(path):
     # os.system(swat_exe_path)
 
 def sort_colors(colors):
-    # super hard to understand function that sort sort colors
+    # super hard to understand function that sort colors
     # for my own colorbar
     d = {k: v for k, v in zip(colors, range(len(colors)))}
     d_sums = {sum(k): v for k, v in d.items()}
