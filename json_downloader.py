@@ -11,8 +11,8 @@ import json
 
 url = "http://www.pogodaiklimat.ru/weather.php"
 charset = "windows-1251"
-# tr - ryadku
-# td - klitunka ryadka
+# tr - рядки
+# td - клітинка рядка
 # дата
 # Облачность общая (первая цифра до черты)
 # Т, Tmin, Tmax, R, S
@@ -77,13 +77,15 @@ def isNotMonthYearEqual(date1, date2):
 
 def get_table(get_params):
     resp = r.get(url, get_params)
+    # print(url, get_params)
     soup = bs(resp.content, "html.parser")
-    table = soup.find("div", {"id": "archive"}).table.table
-    all_trs = table.find_all('tr')
-    return all_trs
+    table = soup.find("div", {"class": "archive-table"})
+    dates_table = table.find("div", {"class": "archive-table-left-column"}).find_all("tr")
+    data_table = table.find("div", {"class": "archive-table-wrap"}).find_all("tr")
+    return dates_table, data_table
 
 
-def parse_table(trs):
+def parse_table(dates_table, data_table):
     data = {
         'date': [],
         'wind': [],
@@ -96,18 +98,21 @@ def parse_table(trs):
         'f': [],
         'Td': []
     }
-    for tr in trs[1:]:
-        tds = tr.find_all('td')
-        data['date'].append(tds[0].text + " " + tds[1].text)
-        data['wind'].append(tds[3].text)
-        data['cloud'].append(tds[6].text)
-        data['T'].append(tds[7].text)
-        data['Tmin'].append(tds[15].text)
-        data['Tmax'].append(tds[16].text)
-        data['R'].append(tds[17].text)
-        data['S'].append(tds[19].text)
-        data['Td'].append(tds[8].text)
-        data['f'].append(tds[9].text)
+    for date, weather_data in zip(dates_table[1:], data_table[1:]):
+        # print(date)
+        # print(weather_data)
+        date_tds = date.find_all('td')
+        data['date'].append(date_tds[0].text + ' ' + date_tds[1].text)
+        wd_tds = weather_data.find_all('td')  # wd_tds - weather data td's
+        data['wind'].append(wd_tds[1].text)
+        data['cloud'].append(wd_tds[4].text)
+        data['T'].append(wd_tds[5].text)
+        data['Tmin'].append(wd_tds[-5].nobr.text)
+        data['Tmax'].append(wd_tds[-4].nobr.text)
+        data['R'].append(wd_tds[-3].text)
+        data['S'].append(wd_tds[-1].text)
+        data['Td'].append(wd_tds[6].nobr.text)
+        data['f'].append(wd_tds[7].text)
     return data
 
 

@@ -18,6 +18,7 @@ a = 0.4
 b = 0.38
 Cor_factor = 0.4
 
+
 def from_past_year(directory):
     files = get_files(directory)
     pprint(files)
@@ -66,7 +67,7 @@ def write_slr_data(cursor, stations, start_date, end_date, slr_file, translit):
             try:
                 file.write("{:08.3f}".format(slr))
             except TypeError:
-                print(st['name'], date, clouds, slr)
+                print(st['name'], curr_date, clouds, slr)
         curr_date += one_day
         file.write("\n")
         i += 1
@@ -117,7 +118,7 @@ def write_hum_data(cursor, stations, start_date, end_date, hum_file):
             try:
                 file.write("{:08.3f}".format(hum))
             except TypeError:
-                print(st['name'], date, hum)
+                print(st['name'], curr_date, hum)
         curr_date += one_day
         file.write("\n")
         i += 1
@@ -159,7 +160,7 @@ def write_wind_data(cursor, stations, start_date, end_date, wind_file):
             try:
                 file.write("{:08.3f}".format(wind))
             except TypeError:
-                print(st['name'], date, wind)
+                print(st['name'], curr_date, wind)
         curr_date += one_day
         file.write("\n")
         i += 1

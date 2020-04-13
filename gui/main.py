@@ -1,6 +1,11 @@
 from tkinter import *
 from tkinter import filedialog
 from tkinter import messagebox
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+from matplotlib.figure import Figure
+from matplotlib.path import Path
+import matplotlib.colors as mcolors
+import matplotlib.cm as cm
 import shapefile as shp
 import os
 import sys
@@ -9,32 +14,26 @@ import sqlite3
 import datetime as dt
 from dateutil import parser
 matplotlib.use('TkAgg')
-from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
-from matplotlib.figure import Figure
-from matplotlib.path import Path
-import matplotlib.colors as mcolors
-import matplotlib.cm as cm
+
 
 sys.path.append("../")
 
 from forecast_appending.with_owm_past import with_owm_past
 from forecast_appending.from_past_year import from_past_year
 from write_swat_from_db import write_swat_from_db
-
-from shape_files_plot.plot_output import plot_output
 from parse_output.parse_output import get_vals, parse_output
 import update_db
-from ua_stations.ua_st_update import ua_st_update
 import update_db as upd_ru_db
 
 w = 800
 h = 600
 swat_path = ""
-swate_exe_name = "rev670_64rel.exe"
+swat_exe_name = "rev670_64rel.exe"
 db_path = "../db.sqlite"
 ua_ids = "../ua_stations/ua_ids.json"
 city_ids_path = "../city_ids.json"
 update_data_dir = "../update_data/"
+
 
 class MyFrame(Tk):
     """Class for main window"""
@@ -67,39 +66,31 @@ class MyFrame(Tk):
         upd_label = Label(upd_db_fr, textvariable=update_status_var)
 
         upd_db_butt = Button(upd_db_fr, text="Update database", width=20,
-                            command=lambda: update_db(upd_label, update_status_var))
-
-        
+                             command=lambda: update_db(upd_label, update_status_var))
         upd_db_butt.grid(row=0, column=0, pady=45)
         upd_label.grid(row=0, column=1, padx=50)
-
         swat_dir_label = Label(select_dir_fr, text="SWAT Directory path:")
         select_swat_dir = Button(select_dir_fr, text="Select SWAT project path", width=20,
-                                command= lambda: self.getDir(swat_dir_label))
+                                 command=lambda: self.get_dir(swat_dir_label))
         select_swat_dir.grid(row=0, column=0, pady=45)
         swat_dir_label.grid(row=0, column=1, padx=50)
 
         variable = StringVar(select_inp_type_fr)
         variable.set("Select type of input file")
         select_type_of_inp_files = OptionMenu(select_inp_type_fr, variable,
-            "from past year", "with owm past")
+                                              "from past year", "with owm past")
         select_type_of_inp_files.grid(row=0, column=0, padx=300, pady=45)
-
         modeling_status_var = StringVar()
         modeling_status_var.set("Modeling status: modeling didn't started.")
         modeling_status_label = Label(start_modeling_fr,
-            textvariable=modeling_status_var)
-
+                                      textvariable=modeling_status_var)
         start_modeling_butt = Button(start_modeling_fr, text="Start modeling", width=20,
-                                    command=lambda: perform_modeling(variable.get(), modeling_status_var))
-        
-
+                                     command=lambda: perform_modeling(variable.get(), modeling_status_var))
         start_modeling_butt.grid(row=0, column=0, pady=45)
         modeling_status_label.grid(row=0, column=1, padx=50)
 
         go_to_viz_butt = Button(go_to_viz_fr, text="Go to output vizualization", width=30,
-            command=self.plot_output
-            )
+                                command=self.plot_output)
         go_to_viz_butt.grid(padx=275, pady=45)
 
     def plot_output(self):
@@ -118,31 +109,24 @@ class MyFrame(Tk):
         variable = StringVar(plot_window)
         variable.set("Select column of output file")
         select_column = OptionMenu(plot_window, variable,
-            *col_names)
+                                   *col_names)
         select_column.pack(anchor="w")
 
         value_box_var = StringVar()
         value_box = Entry(plot_window, textvariable=value_box_var)
         value_box.insert(0, "Here will be value.")
         value_box.configure(state='readonly')
-
-
         fig = Figure(figsize=(8, 8))
         ax = fig.add_subplot(111)
         ax.set_facecolor((1.0, 0.47, 0.42))
         canvas = FigureCanvasTkAgg(fig, master=plot_window)
         plot_button = Button(plot_window, text="Plot graph",
-        command=lambda: self.plot_graph(fig, ax, plot_window,
-            variable, parsed_output, sf, canvas, value_box, value_box_var))
+                             command=lambda: self.plot_graph(fig, ax, plot_window,
+                                                             variable, parsed_output, sf, canvas, value_box,
+                                                             value_box_var))
         plot_button.pack()
         value_box.pack()
         canvas.get_tk_widget().pack()
-        
-
-        # canvas = FigureCanvasTkAgg(fig, master=plot_window)
-        # canvas.get_tk_widget().pack()
-        # canvas.draw()
-
 
     def plot_graph(self, fig, ax, plot_window, variable, parsed_output, sf, canvas, value_box, value_box_var):
         shapes = sf.shapes()
@@ -173,7 +157,7 @@ class MyFrame(Tk):
         pathes = [Path(el) for el in pols]
         colors_cm = sort_colors(colors_cm)
         mycmp = mcolors.LinearSegmentedColormap.from_list(name='custom',
-        colors=colors_cm, N=10)
+                                                          colors=colors_cm, N=10)
         normalize = mcolors.Normalize(vmin=min(vals), vmax=max(vals))
         scalarmappaple = cm.ScalarMappable(norm=normalize, cmap=mycmp)
         scalarmappaple.set_array(vals)
@@ -189,7 +173,7 @@ class MyFrame(Tk):
             cb = fig.colorbar(scalarmappaple)
 
         fig.canvas.mpl_connect('button_press_event',
-            lambda event: self.onclick(event, fig, ax, pathes, vals, value_box, value_box_var))
+                               lambda event: self.onclick(event, fig, ax, pathes, vals, value_box, value_box_var))
 
         canvas.draw()
 
@@ -208,7 +192,6 @@ class MyFrame(Tk):
             value_box_var.set(text)
             value_box.insert(0, text)
 
-
     def _get_shapefile(self):
         dir_content = os.listdir(swat_path)
         shp_file = ""
@@ -217,9 +200,8 @@ class MyFrame(Tk):
                 shp_file = el
         sf = shp.Reader(swat_path + '/' + shp_file)
         return sf
-        
 
-    def getDir(self, swat_dir_label):
+    def get_dir(self, swat_dir_label):
         dirname = filedialog.askdirectory()
         global swat_path
         swat_path = dirname
@@ -235,14 +217,13 @@ def get_update_status():
     table_names = [el[0] for el in table_names_res]
     tommorow = dt.date.today() - dt.timedelta(days=1)
     for name in table_names:
-        res = cursor.execute("""
-            SELECT max(dt) FROM {}
-            """.format(name)).fetchall()
+        res = cursor.execute(f"""
+            SELECT max(dt) FROM {name}
+            """).fetchall()
         max_dt = parser.parse(res[0][0]).date()
         if tommorow != max_dt:
             return "Update needed!"
     return "Update doesn't needed."
-    
 
 
 def update_db(upd_label, update_status_var):
@@ -275,11 +256,13 @@ def perform_modeling(option, modeling_status_var):
         modeling_status_var.set("Modeling status: modeling done.")
         return
 
+
 def execute_swat(path):
-    swat_exe_path = path + "/" + swate_exe_name
+    swat_exe_path = path + "/" + swat_exe_name
     print(swat_exe_path)
     print("swat execution ...")
     # os.system(swat_exe_path)
+
 
 def sort_colors(colors):
     # super hard to understand function that sort colors
@@ -295,10 +278,10 @@ def sort_colors(colors):
         ret.append(d_reversed[ind])
     return ret[::-1]
 
+
 def main():
     root = MyFrame()
     root.mainloop()
-
 
 
 if __name__ == '__main__':

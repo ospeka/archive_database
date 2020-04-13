@@ -47,7 +47,7 @@ cities = [
     "Sumi",
     "Vishgorod"
 ]
-db_path = "./db.sqlite"
+db_path = "./db2020.sqlite"
 city_ids_path = "./city_ids.json"
 update_data_dir = "./update_data/"
 
@@ -81,7 +81,8 @@ def insert_update(data, city_name, cursor):
     for rec in data:
         cursor.execute("""
             INSERT INTO {} VALUES (?,?,?,?,?,?,?,?,?,?)
-            """.format(city_name),(None, rec.date, rec.wind, rec.cloud, rec.t, rec.tmin, rec.tmax, rec.pcp, rec.s, rec.hum))
+            """.format(city_name),
+                       (None, rec.date, rec.wind, rec.cloud, rec.t, rec.tmin, rec.tmax, rec.pcp, rec.s, rec.hum))
     print("Update done.")
 
 
@@ -112,8 +113,8 @@ def download_data(city, cursor, city_ids_path, update_data_dir):
         get_params['amonth'] = curr_date.month
         get_params['ayear'] = curr_date.year
         get_params['id'] = city_ids[city]
-        table = get_table(get_params)
-        data = parse_table(table)
+        dates_table, data_table = get_table(get_params)
+        data = parse_table(dates_table, data_table)
         data['date'].append({'year': get_params["ayear"]})
         data['year'] = str(curr_date.year)
         data_list.append(data)

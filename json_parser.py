@@ -20,7 +20,7 @@ def get_city_data(path="./downloaded_data/SpasDemensk.json"):
             pcp = month['R'][i]
             pcp_data.append([date, pcp])
     pcp_data = recount_pcp(pcp_data)[:-1]
-    # last day pcp is not counable coz its needed
+    # last day pcp is not countable coz its needed
     # next day pcp to recount it
     for dr, pcp, in zip(city_data, pcp_data):
         dr.pcp = pcp[1]
@@ -103,29 +103,6 @@ def num_of_records_by_day(month):
             if key.day == key2.day:
                 res[day] += 1
     return res
-
-
-# def print_month(month_data):
-#     keys = month_data.keys()
-#     number_of_recs = len(month_data['date']) - 1
-#     for key in keys:
-#         print("{:30s}".format(key), end=" ")
-#     print()
-#     for i in range(number_of_recs):
-#         for key in keys:
-#             if key == 'cloud':
-#                 try:
-#                     slash_index = month_data[key][i].index('/')
-#                     print("{:30s}".format(month_data[key][i])[:slash_index], end=" ")
-#                 except ValueError:
-#                     print("{:30s}".format(month_data[key][i]), end=" ")
-#                 continue
-#             if key != 'year' and month_data[key][i] == "":
-#                 print("{:30s}".format("_"), end=" ")
-#                 continue
-#             if key != 'year':
-#                 print("{:30s}".format(month_data[key][i]), end=" ")
-#         print()
 
 
 if __name__ == '__main__':

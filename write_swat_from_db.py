@@ -1,5 +1,5 @@
 # This file get data from db via db_path
-# creting swat files in dir defined in dirpath
+# creating swat files in dir defined in dirpath
 # write swat file headers from data in st_data.json file
 # table names doesnt match with station names so
 # its city_transli.json file
@@ -12,11 +12,11 @@ import dateutil.parser as dt_parser
 from datetime import datetime
 import csv
 
-db_path = "../db.sqlite"
+db_path = "./db2020.sqlite"
 dirpath = "./SWAT_united_test"
-st_data_path = "../st_data.json"
-city_translit = "../city_translit.json"
-irrad_file = "../forecast/Солнечная_радиация_станд_значения.csv"
+st_data_path = "./st_data.json"
+city_translit = "./city_translit.json"
+irrad_file = "./forecast/Солнечная_радиация_станд_значения.csv"
 a = 0.4
 b = 0.38
 Cor_factor = 0.4
@@ -73,10 +73,37 @@ def write_slrdata_from_db(slr_file, cursor, translit, stations_names):
 
 
 def use_formula(clouds, irr_data, date, st_name):
+    if st_name == 'SpasDemensk':
+        st_name = 'Spas-Demensk'
+    elif st_name == 'Elnya':
+        st_name = 'Yelnya'
+    elif st_name == 'Karachaev':
+        st_name = 'Karachev'
+    elif st_name == 'Dmitrovsk':
+        st_name = 'Dmitrovsk-Orlovskiy'
+    elif st_name == 'Poniri':
+        st_name = 'Ponyri_Vtorye'
+    elif st_name == 'Pokoshichi':
+        st_name = 'Korop'
+    elif st_name == 'Rilsk':
+        st_name = 'Rylsk'
+    elif st_name == 'Gluchiv':
+        st_name = 'Hlukhiv'
+    elif st_name == 'Chernigiv':
+        st_name = 'Semenivka'
+    elif st_name == 'Nizhin':
+        st_name = 'Nizhyn'
+    elif st_name == 'Sumi':
+        st_name = 'Sumy'
+    elif st_name == 'Vishgorod':
+        st_name = 'Vyshhorod'
     st_index = irr_data[0].index(st_name)
     month_index = date.month
     q_zero = float(irr_data[month_index][st_index])
-    n = clouds / 10
+    try:
+        n = clouds / 10
+    except TypeError:
+        return 0
     slr = q_zero * (1 - (a + b * n) * n)
     slr *= (1 + Cor_factor)
     return round(slr, 3)

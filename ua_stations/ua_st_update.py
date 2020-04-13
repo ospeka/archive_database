@@ -9,15 +9,16 @@ from pprint import pprint
 import dateutil.parser as dt_parser
 from dateutil.relativedelta import relativedelta
 from datetime import datetime as dt
-import ftplib
+import datetime
+# import ftplib
 from math import exp
 
-f = ftplib.FTP()
-f.connect("uhmi.org.ua", 21)
-f.login("osipov_weather",  "jH9lf26Z")
-f.cwd("osipov_weather")
+# f = ftplib.FTP()
+# f.connect("uhmi.org.ua", 21)
+# f.login("osipov_weather",  "jH9lf26Z")
+# f.cwd("osipov_weather")
 
-db_path = "../db.sqlite"
+db_path = "../db2020.sqlite"
 ua_ids_path = "./ua_ids.json"
 
 ua_stations = [
@@ -59,7 +60,9 @@ def get_max_date(st, cursor):
 def update_st(max_date, st, cursor, ua_ids):
     one_day = relativedelta(days=1)
     start_date = max_date + one_day
-    end_date = dt.today()
+    # end_date = dt.today()
+    # end_date = dt.date(year=2020, month=4, day=7)
+    end_date = datetime.datetime(year=2020, month=4, day=7)
     while start_date.date() != end_date.date():
         # print(start_date)
         file_line = get_file_lines(st, start_date, ua_ids)
@@ -91,19 +94,23 @@ def insert_data(st, cursor, cols):
 
 def calc_hum(Td=15, t=15):
     rh = (exp((17.625*Td)/(243.04+Td))/exp((17.625*t)/(243.04+t)))
-    return round(rh,3)
+    return round(rh, 3)
 
 def get_file_lines(st, date, ua_ids):
     file_name = compose_file_name(date)
-    file_lines = []
-    # print(file_name)
     try:
-        f.retrlines("RETR ./" + file_name, callback=file_lines.append)
-    # except correct exception if file not reachable
-    except:
+        file_lines = open(file_name, mode='r').readlines()
+    except FileNotFoundError:
         print(file_name)
-        print("didnt reach")
         return None
+    # print(file_name)
+    # try:
+    #     f.retrlines("RETR ./" + file_name, callback=file_lines.append)
+    # except correct exception if file not reachable
+    # except:
+    #     print(file_name)
+    #     print("didnt reach")
+    #     return None
     st_id = ua_ids[st]
     for line in file_lines:
         if line.startswith(str(st_id)):
@@ -112,13 +119,13 @@ def get_file_lines(st, date, ua_ids):
 
 
 def compose_file_name(date):
-    file_name = "cgms_"
+    file_name = "../osadchii/cgms_"
     if len(str(date.day)) == 1:
-        file_name += "0"  + str(date.day) + "_"
+        file_name += "0" + str(date.day) + "_"
     else:
         file_name += str(date.day) + "_"
     if len(str(date.month)) == 1:
-        file_name += "0"  + str(date.month) + "_"
+        file_name += "0" + str(date.month) + "_"
     else:
         file_name += str(date.month) + "_"
     file_name += str(date.year) + ".txt"

@@ -5,13 +5,15 @@
 # 3) append data as forecast from db previous data
 import sqlite3
 import os
+import csv
 from pprint import pprint
 from datetime import datetime, timedelta
 import dateutil.parser as dt_parser
+import write_swat_from_db
 
-db_path = "./db.sqlite"
+db_path = "./db2020.sqlite"
 write_up_dir = "./test_write_up"
-
+irrad_file = "./forecast/Солнечная_радиация_станд_значения.csv"
 
 def append_from_db():
     # appends data from db to non till today files
@@ -28,24 +30,118 @@ def append_from_db():
     stations = get_stations(files, tables)
     start_date = get_start_date(files)
     data_to_append = get_data_to_append(start_date, cursor, tables, stations)
-    write_up_data(data_to_append, files, write_up_dir)
+    write_up_data(data_to_append, files, stations)
 
 
-def write_up_data(data_to_append, files, write_up_dir):
+def write_up_data(data_to_append, files, stations):
     # add write_up_dir
     pcp_data = []
     test_st = data_to_append[0]
     for record in test_st['data']:
         # add date and pcp in pcp data list
         pcp_data.append([record[0], record[-1]])
-    for st in data_to_append[1:]:
+    for st in data_to_append:
         for record, pcp in zip(st['data'], pcp_data):
             pcp.append(record[-1])
-    print(files)
-    write_up_pcp(pcp_data, files['pcp_file'], write_up_dir)
+
+    hmd_data = []
+    for record in test_st['data']:
+        hmd_data.append([record[0], record[2]])
+    for st in data_to_append:
+        for record, hmd in zip(st['data'], hmd_data):
+            hmd.append(record[2])
+
+    cloud_data = []
+    for record in test_st['data']:
+        cloud_data.append([record[0], record[-2]])
+    for st in data_to_append:
+        for record, cloud in zip(st['data'], cloud_data):
+            cloud.append(record[-2])
+
+    wnd_data = []
+    for record in test_st['data']:
+        wnd_data.append([record[0], record[1]])
+    for st in data_to_append:
+        for record, wnd in zip(st['data'], wnd_data):
+            wnd.append(record[1])
+
+    tmp_data = []
+    for record in test_st['data']:
+        tmp_data.append([record[0], [record[4], record[3]]])  # t max and tmin
+    for st in data_to_append:
+        for record, tmp in zip(st['data'], tmp_data):
+            tmp.append([record[4], record[3]])  # tmax and tmin
+
+    # pcp_data, hmd_data, cloud_data, wnd_data, tmp_data
+
+    write_up_pcp(pcp_data, files['pcp_file'])
+    write_up_hmd(hmd_data, files['hum_file'])
+    write_up_slr(cloud_data, files['slr_file'], stations)
+    write_up_wnd(wnd_data, files['wind_file'])
+    write_up_tmp(tmp_data, files['temp_file'])
+
+def write_up_tmp(tmp_data, tmp_file):
+    file = open(tmp_file, mode='a')
+    for day_data in tmp_data:
+        date = dt_parser.parse(day_data[0])
+        year = date.year
+        first_jan = datetime(int(date.year), 1, 1)
+        delta = date - first_jan
+        file.write("{}{:03}".format(year, delta.days + 1))
+        for record in day_data[1:]:
+            tmax = record[0] if record[0] else 0.0
+            tmin = record[1] if record[1] else 0.0
+            file.write("{:-05.1f}".format(float(tmax)))
+            file.write("{:-05.1f}".format(float(tmin)))
+        file.write('\n')
 
 
-def write_up_pcp(pcp_data, pcp_file, write_up_dir):
+def write_up_wnd(wnd_data, wnd_file):
+    file = open(wnd_file, mode='a')
+    for day_data in wnd_data:
+        date = dt_parser.parse(day_data[0])
+        year = date.year
+        first_jan = datetime(int(date.year), 1, 1)
+        delta = date - first_jan
+        file.write("{}{:03}".format(year, delta.days + 1))
+        for record in day_data[1:]:
+            wnd = record if record else 0.0
+            file.write("{:08.3f}".format(wnd))
+        file.write('\n')
+
+
+def write_up_slr(cloud_data, slr_file, stations):
+    file = open(slr_file, mode='a')
+    with open(irrad_file, 'r', encoding='utf-8') as csvfile:
+        reader = csv.reader(csvfile)
+        irr_data = [line for line in reader]
+    for day_data in cloud_data:
+        date = dt_parser.parse(day_data[0])
+        year = date.year
+        first_jan = datetime(int(date.year), 1, 1)
+        delta = date - first_jan
+        file.write("{}{:03}".format(year, delta.days + 1))
+        for record, st_name in zip(day_data[1:], stations):
+            cloud = record if record else 0.0
+            slr = write_swat_from_db.use_formula(cloud, irr_data, date, st_name)
+            file.write("{:08.3f}".format(slr))
+        file.write('\n')
+
+def write_up_hmd(hmd_data, hmd_file):
+    file = open(hmd_file, mode='a')
+    for day_data in hmd_data:
+        date = dt_parser.parse(day_data[0])
+        year = date.year
+        first_jan = datetime(int(date.year), 1, 1)
+        delta = date - first_jan
+        file.write("{}{:03}".format(year, delta.days + 1))
+        for record in day_data[1:]:
+            hmd = record if record else 0.0
+            file.write("{:08.3f}".format(hmd))
+        file.write('\n')
+
+
+def write_up_pcp(pcp_data, pcp_file):
     file = open(pcp_file, mode='a')
     for day_data in pcp_data:
         date = dt_parser.parse(day_data[0])
@@ -63,7 +159,7 @@ def get_data_to_append(start_date, cursor, tables, stations):
     data = []
     for st in stations:
         res = cursor.execute("""
-            SELECT dt, wind, cloud, tmin, tmax, pcp FROM {}
+            SELECT dt, wind, hum, tmin, tmax, cloud, pcp FROM {}
             WHERE dt >= (?)
             ORDER BY dt
         """.format(st), (start_date,)).fetchall()
