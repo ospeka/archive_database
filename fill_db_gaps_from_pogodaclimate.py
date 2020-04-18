@@ -41,12 +41,12 @@ def main():
     print(len(st_to_upd))
     # fill_gaps(cursor, st_to_upd[0])
     for st_name in st_to_upd:
-        fill_gaps(cursor, st_name)
+        fill_gaps(cursor, st_name, con)
     con.commit()
     con.close()
 
 
-def fill_gaps(cursor, st):
+def fill_gaps(cursor, st, con):
     one_day = relativedelta(days=1)
     gap_days = []
     curr_date = start_date
@@ -58,7 +58,7 @@ def fill_gaps(cursor, st):
         if not res:
             gap_days.append(curr_date)
         curr_date += one_day
-    print(st, gap_days)
+    print(st, len(gap_days))
     # st_data, upd_file_path = get_data_to_fill(gap_days[0], st)
     for gap_day in gap_days:
         st_data, upd_file_path = get_data_to_fill(gap_day, st)
@@ -67,6 +67,7 @@ def fill_gaps(cursor, st):
         else:
             print(f"Error: {upd_file_path} file not found")
         update_db.insert_update(st_data, st, cursor)
+        con.commit()
 
 
 
@@ -86,7 +87,7 @@ def get_data_to_fill(gap_day, st_name):
     path = update_data_dir + st_name + "_upd_data.json"
     with open(path, 'w+') as fout:
         json.dump(data_list, fout)
-    st_data, st_name_from_json = json_parser.get_city_data(path=path)
+    st_data, st_name_from_json = json_parser.get_city_data(get_params, path=path)
     return st_data, path
 
 

@@ -92,7 +92,8 @@ def insert_data(st, cursor, cols):
         """.format(st), (None, dt_obj, wind, cloud, t, tmin, tmax, pcp, s, hum))
     # print(None, dt, wind, cloud, t, tmin, tmax, pcp, s, hum)
 
-def calc_hum(Td=15, t=15):
+
+def calc_hum(Td=15.0, t=15):
     rh = (exp((17.625*Td)/(243.04+Td))/exp((17.625*t)/(243.04+t)))
     return round(rh, 3)
 
@@ -101,7 +102,7 @@ def get_file_lines(st, date, ua_ids):
     try:
         file_lines = open(file_name, mode='r').readlines()
     except FileNotFoundError:
-        print(file_name)
+        print(file_name, 'file name')
         return None
     # print(file_name)
     # try:

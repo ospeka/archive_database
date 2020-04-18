@@ -7,10 +7,11 @@
 # 3. use this script to have new swat files. dont forget to update value curr_year.
 # as a source of swat files this script takes swat files from swat_files_dir variable(test_write_up dir)
 from pprint import pprint
-import from_past_year
 import datetime
 import dateutil
 import shutil
+
+import from_past_year
 
 res_dir = './from_swat_past_year_test'
 swat_files_dir = '../test_write_up'
@@ -21,7 +22,7 @@ curr_year = 2020
 def main():
     files = from_past_year.get_files(swat_files_dir)
     pprint(files)
-    end_date = datetime.date(year=2020, month=12, day=31)
+    end_date = datetime.date(year=2021, month=1, day=1)
     today = datetime.date.today()
     days_to_copy = (end_date - today).days
     print(days_to_copy)
@@ -47,11 +48,24 @@ def append_from_swat_file(swat_file_path, date_to_find_str, days_to_copy):
         if line.startswith(date_to_find_str):
             ind = in_file_lines.index(line)
             break
-    to_write_lines = in_file_lines[ind: ind + days_to_copy]
-    for to_write in to_write_lines:
-        replaced_year = to_write.replace(str(year_to_append), str(curr_year))
-        out_file.write(replaced_year)
-        # break
+
+    if year_to_append % 4 != 0:
+        # print(in_file_lines[ind + 1])
+        to_write_lines = in_file_lines[ind + 1: ind + days_to_copy + 1]
+        # print(to_write_lines[-1])
+        for to_write in to_write_lines[:-1]:
+            replaced_year = to_write.replace(str(year_to_append), str(curr_year))
+            out_file.write(replaced_year)
+        last_day_line = to_write_lines[-1].replace('001', '366', 1)
+        last_day_line = last_day_line.replace(str(year_to_append + 1), str(curr_year))
+        out_file.write(last_day_line)
+    else:
+        to_write_lines = in_file_lines[ind: ind + days_to_copy]
+        # print(to_write_lines[0])
+        # print(to_write_lines[-1])
+        for to_write in to_write_lines:
+            replaced_year = to_write.replace(str(year_to_append), str(curr_year))
+            out_file.write(replaced_year)
 
 
 

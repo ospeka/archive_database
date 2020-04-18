@@ -2,9 +2,12 @@ import json
 import datetime as dt
 from collections import OrderedDict
 from DayRecord import DayRecord
+from pprint import pprint
+import json_downloader
 
+city_ids = json.load(open("./city_ids.json", "r"))
 
-def get_city_data(path="./downloaded_data/SpasDemensk.json"):
+def get_city_data(get_params, path="./downloaded_data/SpasDemensk.json"):
     data = json.load(open(path, 'r'))
     city_name = data[0]['city']
     city_data = []
@@ -19,7 +22,7 @@ def get_city_data(path="./downloaded_data/SpasDemensk.json"):
             date = month['date'][i] + ' ' + year
             pcp = month['R'][i]
             pcp_data.append([date, pcp])
-    pcp_data = recount_pcp(pcp_data)[:-1]
+    pcp_data = recount_pcp2(pcp_data, get_params)
     # last day pcp is not countable coz its needed
     # next day pcp to recount it
     for dr, pcp, in zip(city_data, pcp_data):
@@ -71,6 +74,109 @@ def recount_pcp(pcp_data):
         records[i][1] = pcp
         pcp = None
     return records
+
+def recount_pcp2(pcp_data, get_params):
+    hours_list = []
+    for el in pcp_data:
+        date_string = el[0].strip(' ')
+        try:
+            date_time = dt.datetime.strptime(date_string, '%H %d.%m %Y')
+        except ValueError:
+            continue
+        if el[1] == '':
+            val = 0
+        else:
+            val = float(el[1])
+        hours_list.append([date_time, val])
+    days_list = []
+    try:
+        curr_hour_record = hours_list[0]
+    except:
+        print(hours_list)
+        print(pcp_data)
+        print(get_params)
+        return [['', None]]
+    day_list = []
+    for el in hours_list:
+        if el[0].day == curr_hour_record[0].day:
+            day_list.append(el)
+        else:
+            days_list.append(day_list)
+            day_list = [el]
+            curr_hour_record = el
+    else:
+        days_list.append(day_list)
+    res = []
+    for i in range(len(days_list[:-1])):
+        val = count_value(days_list[i], days_list[i + 1])
+        res.append([days_list[i][0][0].date(), round(val, 3)])
+
+    last_day_hours_list = days_list[-1]
+    last_day = days_list[-1][0][0]
+
+    one_day = dt.timedelta(days=1)
+    next_day = last_day + one_day
+    new_get_params = get_params
+    new_get_params['bday'] = next_day.day
+    new_get_params['fday'] = next_day.day
+    new_get_params['amonth'] = next_day.month
+    new_get_params['ayear'] = next_day.year
+
+    citys_names_by_id = {v: k for k, v in city_ids.items()}
+    data_list = [{'city': citys_names_by_id[new_get_params["id"]], 'city_id': new_get_params["id"]}]
+    dates_table, data_table = json_downloader.get_table(get_params)
+    data = json_downloader.parse_table(dates_table, data_table)
+    data['date'].append({'year': get_params["ayear"]})
+    data['year'] = str(2015)
+    data_list.append(data)
+    next_day_pcp = data_list[1]['R']
+    next_day_dates = data_list[1]['date'][:-1]
+
+    hours_list = []
+    for pcp, date in zip(next_day_pcp, next_day_dates):
+        date_string = (date + " " + str(new_get_params['ayear'])).strip()
+        try:
+            date_time = dt.datetime.strptime(date_string, '%H %d.%m %Y')
+        except ValueError:
+            last_day_error = True
+            break
+        if pcp == '':
+            val = 0
+        else:
+            val = float(pcp)
+        hours_list.append([date_time, val])
+    else:
+        last_day_error = False
+    last_day_value = count_value(last_day_hours_list, hours_list, last_day_error=last_day_error)
+    res.append([last_day.date(), round(last_day_value, 3)])
+
+    return res
+
+
+def count_value(today_el, tommorow_el, last_day_error=False):
+    val1 = None
+    hour = 15
+    for el in today_el:
+        if el[0].hour == hour:
+            val1 = el[1]
+    if val1 == None:
+        hour == 18
+    for el in today_el:
+        if el[0].hour == hour:
+            val1 = el[1]
+    if val1 == None:
+        val1 = 0
+    if last_day_error:
+        return val1
+    val2 = None
+    hour = 3 if hour == 15 else 6
+    for el in tommorow_el:
+        if el[0].hour == hour:
+            val2 = el[1]
+    if val2 == None:
+        val2 = 0
+    return val1 + val2
+
 
 
 def parse_month(month):

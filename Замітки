@@ -73,7 +73,8 @@ pop: Probability of Precipitation (%).
 5. дописаи сват файли
     appending_swat_files.py
 
-
+DELETE FROM Zhukovka
+WHERE dt BETWEEN "2015-01-01 00:00:00" AND "2020-05-04 00:00:00"
 
 
 

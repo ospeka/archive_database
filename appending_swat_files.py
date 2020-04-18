@@ -39,39 +39,39 @@ def write_up_data(data_to_append, files, stations):
     test_st = data_to_append[0]
     for record in test_st['data']:
         # add date and pcp in pcp data list
-        pcp_data.append([record[0], record[-1]])
+        pcp_data.append([record[0]])
     for st in data_to_append:
         for record, pcp in zip(st['data'], pcp_data):
             pcp.append(record[-1])
 
     hmd_data = []
     for record in test_st['data']:
-        hmd_data.append([record[0], record[2]])
+        hmd_data.append([record[0]])
     for st in data_to_append:
         for record, hmd in zip(st['data'], hmd_data):
             hmd.append(record[2])
 
     cloud_data = []
     for record in test_st['data']:
-        cloud_data.append([record[0], record[-2]])
+        cloud_data.append([record[0]])
     for st in data_to_append:
         for record, cloud in zip(st['data'], cloud_data):
             cloud.append(record[-2])
 
     wnd_data = []
     for record in test_st['data']:
-        wnd_data.append([record[0], record[1]])
+        wnd_data.append([record[0]])
     for st in data_to_append:
         for record, wnd in zip(st['data'], wnd_data):
             wnd.append(record[1])
 
     tmp_data = []
     for record in test_st['data']:
-        tmp_data.append([record[0], [record[4], record[3]]])  # t max and tmin
+        tmp_data.append([record[0]])  # t max and tmin
     for st in data_to_append:
         for record, tmp in zip(st['data'], tmp_data):
             tmp.append([record[4], record[3]])  # tmax and tmin
-
+    print()
     # pcp_data, hmd_data, cloud_data, wnd_data, tmp_data
 
     write_up_pcp(pcp_data, files['pcp_file'])

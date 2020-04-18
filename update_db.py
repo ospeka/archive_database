@@ -83,7 +83,7 @@ def insert_update(data, city_name, cursor):
             INSERT INTO {} VALUES (?,?,?,?,?,?,?,?,?,?)
             """.format(city_name),
                        (None, rec.date, rec.wind, rec.cloud, rec.t, rec.tmin, rec.tmax, rec.pcp, rec.s, rec.hum))
-    print("Update done.")
+    # print("Update done.")
 
 
 def download_data(city, cursor, city_ids_path, update_data_dir):
