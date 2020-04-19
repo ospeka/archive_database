@@ -2,8 +2,16 @@ import sqlite3
 from json_parser import get_city_data
 import os
 
-db_path = "./db.sqlite"
+db_path = "./db2.sqlite"
 
+get_params = {
+        "id": "26898",
+        "bday": "1",
+        "fday": "10",
+        "amonth": "10",
+        "ayear": "2018",
+        "bot": "2"
+    }
 
 def main():
     dir_list = os.listdir("./downloaded_data")
@@ -13,7 +21,7 @@ def main():
         filename, file_extension = os.path.splitext(file)
         if file_extension == ".json":
             print("filename - ", filename)
-            city_data, city_name = get_city_data("./downloaded_data/" + file)
+            city_data, city_name = get_city_data(get_params, "./downloaded_data/" + file)
             print(city_name)
             insert_city_data(city_data, city_name)
     # city_data, city_name = get_city_data()
@@ -21,7 +29,7 @@ def main():
 
 
 def insert_city_data(city_data, city_name):
-    con = sqlite3.connect('./db.sqlite')
+    con = sqlite3.connect(db_path)
     cursor = con.cursor()
     cursor.execute("""
         SELECT name FROM sqlite_master WHERE type='table';

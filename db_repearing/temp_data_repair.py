@@ -6,7 +6,7 @@ from pprint import pprint
 import json
 
 st_distances_path = "./station_distances.json"
-db_path = "../db.sqlite"
+db_path = "../db2.sqlite"
 
 
 def main():

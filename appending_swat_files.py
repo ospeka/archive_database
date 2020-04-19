@@ -11,7 +11,7 @@ from datetime import datetime, timedelta
 import dateutil.parser as dt_parser
 import write_swat_from_db
 
-db_path = "./db2020.sqlite"
+db_path = "./db2.sqlite"
 write_up_dir = "./test_write_up"
 irrad_file = "./forecast/Солнечная_радиация_станд_значения.csv"
 

@@ -21,7 +21,7 @@ charset = "windows-1251"
 # S не понадобится для прогноза, но полезное значение
 id = "26898"
 # bryansk
-start_data = dt.date(year=2011, month=1, day=1)
+start_data = dt.date(year=2015, month=1, day=1)
 end_data = dt.date.today()
 
 
@@ -51,8 +51,8 @@ def main():
             get_params['fday'] = str(month_last)
             get_params['amonth'] = str(curr_data.month)
             get_params['ayear'] = str(curr_data.year)
-            table = get_table(get_params)
-            data = parse_table(table)
+            dates_table, data_table = get_table(get_params)
+            data = parse_table(dates_table, data_table)
             data['year'] = str(curr_data.year)
             data['date'].append({'year': get_params["ayear"]})
             data_list.append(data)

@@ -47,7 +47,7 @@ cities = [
     "Sumi",
     "Vishgorod"
 ]
-db_path = "./db2020.sqlite"
+db_path = "./db2.sqlite"
 city_ids_path = "./city_ids.json"
 update_data_dir = "./update_data/"
 
@@ -65,7 +65,7 @@ def update_db(db_path, city_ids_path, update_data_dir):
             print("Update for ", city, " doesnt need.")
             continue
         print(path)
-        city_data, city_name = get_city_data(path)
+        city_data, city_name = get_city_data(get_params, path)
         if os.path.isfile(path):
             os.remove(path)
         else:

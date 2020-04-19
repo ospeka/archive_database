@@ -22,6 +22,7 @@ def get_city_data(get_params, path="./downloaded_data/SpasDemensk.json"):
             date = month['date'][i] + ' ' + year
             pcp = month['R'][i]
             pcp_data.append([date, pcp])
+    get_params['id'] = data[0]['city_id']
     pcp_data = recount_pcp2(pcp_data, get_params)
     # last day pcp is not countable coz its needed
     # next day pcp to recount it
@@ -75,6 +76,7 @@ def recount_pcp(pcp_data):
         pcp = None
     return records
 
+
 def recount_pcp2(pcp_data, get_params):
     hours_list = []
     for el in pcp_data:
@@ -84,7 +86,7 @@ def recount_pcp2(pcp_data, get_params):
         except ValueError:
             continue
         if el[1] == '':
-            val = 0
+            val = None
         else:
             val = float(el[1])
         hours_list.append([date_time, val])
@@ -109,7 +111,11 @@ def recount_pcp2(pcp_data, get_params):
     res = []
     for i in range(len(days_list[:-1])):
         val = count_value(days_list[i], days_list[i + 1])
-        res.append([days_list[i][0][0].date(), round(val, 3)])
+        if val is not None and val > 200:
+            val = val / 50
+        if val is not None:
+            val = round(val, 3)
+        res.append([days_list[i][0][0].date(), val])
 
     last_day_hours_list = days_list[-1]
     last_day = days_list[-1][0][0]
@@ -159,13 +165,13 @@ def count_value(today_el, tommorow_el, last_day_error=False):
     for el in today_el:
         if el[0].hour == hour:
             val1 = el[1]
-    if val1 == None:
-        hour == 18
+    if val1 is None:
+        hour = 18
     for el in today_el:
         if el[0].hour == hour:
             val1 = el[1]
-    if val1 == None:
-        val1 = 0
+    if val1 is None:
+        val1 = None
     if last_day_error:
         return val1
     val2 = None
@@ -173,8 +179,14 @@ def count_value(today_el, tommorow_el, last_day_error=False):
     for el in tommorow_el:
         if el[0].hour == hour:
             val2 = el[1]
-    if val2 == None:
-        val2 = 0
+    if val2 is None:
+        val2 = None
+    if val1 is None and val2 is not None:
+        return val2
+    elif val1 is not None and val2 is None:
+        return val1
+    elif val1 is None and val2 is None:
+        return None
     return val1 + val2
 
 

@@ -4,9 +4,9 @@ from pprint import pprint
 from dateutil.relativedelta import relativedelta
 import json
 
-db_path = './db.sqlite'
+db_path = './db2.sqlite'
 dist_path = './station_distances.json'
-start_date = datetime(year=2011, month=1, day=1)
+start_date = datetime(year=2015, month=1, day=1)
 end_date = datetime.now()
 end_date = datetime(year=end_date.year, month=end_date.month, day=end_date.day)
 
@@ -71,7 +71,7 @@ def get_data_to_fill(st, cursor, gap_day, st_distances):
         else:
             i += 1
         if i > 27:
-            print("no records fot this gap day, We should do smth)")
+            print("no records fot this gap day for all stations, We should do smth)")
             print(gap_day)
             return None
     return res

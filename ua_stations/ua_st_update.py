@@ -18,7 +18,7 @@ from math import exp
 # f.login("osipov_weather",  "jH9lf26Z")
 # f.cwd("osipov_weather")
 
-db_path = "../db2020.sqlite"
+db_path = "../db2.sqlite"
 ua_ids_path = "./ua_ids.json"
 
 ua_stations = [
