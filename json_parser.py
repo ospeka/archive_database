@@ -7,6 +7,7 @@ import json_downloader
 
 city_ids = json.load(open("./city_ids.json", "r"))
 
+
 def get_city_data(get_params, path="./downloaded_data/SpasDemensk.json"):
     data = json.load(open(path, 'r'))
     city_name = data[0]['city']
@@ -23,7 +24,7 @@ def get_city_data(get_params, path="./downloaded_data/SpasDemensk.json"):
             pcp = month['R'][i]
             pcp_data.append([date, pcp])
     get_params['id'] = data[0]['city_id']
-    pcp_data = recount_pcp2(pcp_data, get_params)
+    pcp_data = recount_pcp(pcp_data, get_params)
     # last day pcp is not countable coz its needed
     # next day pcp to recount it
     for dr, pcp, in zip(city_data, pcp_data):
@@ -32,52 +33,7 @@ def get_city_data(get_params, path="./downloaded_data/SpasDemensk.json"):
     return city_data, city_name
 
 
-def recount_pcp(pcp_data):
-    dates = OrderedDict()
-    for el in pcp_data:
-        try:
-            date = dt.datetime.strptime(el[0], '%H %d.%m %Y').date()
-        except ValueError:
-            pcp_data.remove(el)
-            continue
-        if date not in dates:
-            dates[date] = [el[1]]
-        else:
-            dates[date].append(el[1])
-    records = [[key, value] for key, value in dates.items()]
-    records_len = len(records)
-    pcp = None
-    for i in range(records_len - 1):
-        today_pcp = records[i][1]
-        tomorrow_pcp = records[i + 1][1]
-        try:
-            if today_pcp[5] != '':
-                if tomorrow_pcp[1] != '':
-                    pcp = float(today_pcp[5]) + float(tomorrow_pcp[1])
-                else:
-                    pcp = float(today_pcp[5])
-            elif today_pcp[6] != '':
-                if tomorrow_pcp[2] != '':
-                    pcp = float(today_pcp[6]) + float(tomorrow_pcp[2])
-                else:
-                    pcp = float(today_pcp[6])
-            elif tomorrow_pcp[1] != '':
-                pcp = float(tomorrow_pcp[1])
-            elif tomorrow_pcp[2] != '':
-                pcp = float(tomorrow_pcp[2])
-        except IndexError:
-            pcp = None
-        if pcp is not None and pcp > 200:
-            pcp = pcp / 50
-        if pcp is not None and pcp > 100:
-            pass
-            # avarage with nearest station!
-        records[i][1] = pcp
-        pcp = None
-    return records
-
-
-def recount_pcp2(pcp_data, get_params):
+def recount_pcp(pcp_data, get_params):
     hours_list = []
     for el in pcp_data:
         date_string = el[0].strip(' ')
@@ -154,45 +110,57 @@ def recount_pcp2(pcp_data, get_params):
     else:
         last_day_error = False
     last_day_value = count_value(last_day_hours_list, hours_list, last_day_error=last_day_error)
-    res.append([last_day.date(), round(last_day_value, 3)])
-
+    if last_day_value is not None:
+        last_day_value = round(last_day_value, 3)
+    res.append([last_day.date(), last_day_value])
     return res
 
 
-def count_value(today_el, tommorow_el, last_day_error=False):
-    val1 = None
-    hour = 15
+def count_value(today_el, tomorrow_el, last_day_error=False):
+    today_15 = None
+    today_18 = None
+    tomorrow_03 = None
+    tomorrow_06 = None
     for el in today_el:
-        if el[0].hour == hour:
-            val1 = el[1]
-    if val1 is None:
-        hour = 18
+        if el[0].hour == 15:
+            today_15 = el[1]
     for el in today_el:
-        if el[0].hour == hour:
-            val1 = el[1]
-    if val1 is None:
-        val1 = None
-    if last_day_error:
-        return val1
-    val2 = None
-    hour = 3 if hour == 15 else 6
-    for el in tommorow_el:
-        if el[0].hour == hour:
-            val2 = el[1]
-    if val2 is None:
-        val2 = None
-    if val1 is None and val2 is not None:
-        return val2
-    elif val1 is not None and val2 is None:
-        return val1
-    elif val1 is None and val2 is None:
-        return None
-    return val1 + val2
+        if el[0].hour == 18:
+            today_18 = el[1]
 
+    if not last_day_error:
+        for el in tomorrow_el:
+            if el[0].hour == 3:
+                tomorrow_03 = el[1]
+        for el in tomorrow_el:
+            if el[0].hour == 6:
+                tomorrow_06 = el[1]
+    pcp_total = 0.0
+    if today_15 is not None:
+        pcp_total += today_15
+        if tomorrow_03 is not None:
+            pcp_total += tomorrow_03
+        return pcp_total
+    elif today_18 is not None:
+        pcp_total += today_18
+        if tomorrow_06 is not None:
+            pcp_total += tomorrow_06
+        return pcp_total
+    return None
+
+# pcp_total = 0
+# if pcp[datetime[i]["15:00"]] != '':                     #поточна дата i
+#     pcp_total = pcp_number_in_cell[i]["15:00"]
+#   if pcp[datetime[i + 1]["03:00"]] != '':                 #наступна дата i + 1
+#     pcp_total = pcp_total + pcp_number_in_cell[i + 1]["03:00"]
+# else:
+#     if pcp[datetime[i]["18:00"]] != '':
+#         pcp_total = pcp_number_in_cell[i]["18:00"]
+#     if pcp[datetime[i + 1]["06:00"]] != '':
+#         pcp_total = pcp_total + pcp_number_in_cell[i + 1]["06:00"]
 
 
 def parse_month(month):
-    year = month['year']
     num_of_recs_by_day = num_of_records_by_day(month)
     i = 0
     month_records = []
@@ -224,4 +192,5 @@ def num_of_records_by_day(month):
 
 
 if __name__ == '__main__':
-    get_city_data()
+    pass
+
