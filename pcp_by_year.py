@@ -22,7 +22,7 @@ def main():
         """).fetchall()
         print(name)
         for el in res:
-            print(el[0], el[1])
+            print(el[1], ' - ',el[0])
 
 if __name__ == '__main__':
     main()

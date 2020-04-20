@@ -24,7 +24,7 @@ def main():
     # path = update_data_dir + st_name + "_upd_data.json"
     # with open(path, 'w+') as fout:
     #     json.dump(data_list, fout)
-    path = 'downloaded_data/Chernigiv.json'
+    path = 'downloaded_data/Dmitrovsk.json'
     st_data, st_name_from_json = json_parser.get_city_data(get_params, path=path)
     print(st_data[1].pcp)
 
