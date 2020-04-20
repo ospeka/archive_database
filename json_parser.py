@@ -116,6 +116,7 @@ def recount_pcp(pcp_data, get_params):
     return res
 
 
+
 def count_value(today_el, tomorrow_el, last_day_error=False):
     today_15 = None
     today_18 = None
@@ -136,7 +137,7 @@ def count_value(today_el, tomorrow_el, last_day_error=False):
     for el in today_el:
         if el[0].hour == 18:
             today_18 = el[1]
-            datetime_18 = 'exist'
+            datetime_18 = "exist"
             break
         else:
             datetime_18 = "absent"
@@ -145,14 +146,14 @@ def count_value(today_el, tomorrow_el, last_day_error=False):
         for el in tomorrow_el:
             if el[0].hour == 3:
                 tomorrow_03 = el[1]
-                datetime_03 = 'exist'
+                datetime_03 = "exist"
                 break
             else:
                 datetime_03 = "absent"
         for el in tomorrow_el:
             if el[0].hour == 6:
                 tomorrow_06 = el[1]
-                datetime_06 = 'exist'
+                datetime_06 = "exist"
                 break
             else:
                 datetime_06 = "absent"
@@ -160,7 +161,7 @@ def count_value(today_el, tomorrow_el, last_day_error=False):
             if el[0].hour == 15:
                 tomorrow_15 = el[1]
     if datetime_15 == "absent" and datetime_18 == "absent" and datetime_03 == "absent" and datetime_06 == "absent":
-        return None # что-нибудь, что сигнализирует о том, что надо взять данные с соседней станции
+        return None  # что-нибудь, что сигнализирует о том, что надо взять данные с соседней станции
 
     pcp_total = 0.0
     if today_15 is not None:
@@ -170,24 +171,14 @@ def count_value(today_el, tomorrow_el, last_day_error=False):
     else:
         if today_18 is not None:
             pcp_total += today_18
-        if tomorrow_06 is not None and tomorrow_15 is None:
-            pcp_total += tomorrow_06
-        elif tomorrow_06 is not None and datetime_03 == "absent":
-            pcp_total += 0.75 * tomorrow_06
-        else:
-            pcp_total = None
+        if tomorrow_06 is not None:
+            if tomorrow_15 is None:
+                pcp_total += tomorrow_06
+            elif datetime_03 == "absent":
+                pcp_total += 0.75 * tomorrow_06
+            elif today_18 is None and tomorrow_06 is None:
+                pcp_total = None
     return pcp_total
-
-# pcp_total = 0
-# if pcp[datetime[i]["15:00"]] != '':                     #поточна дата i
-#     pcp_total = pcp_number_in_cell[i]["15:00"]
-# if pcp[datetime[i + 1]["03:00"]] != '':                 #наступна дата i + 1
-#     pcp_total = pcp_total + pcp_number_in_cell[i + 1]["03:00"]
-# else:
-#     if pcp[datetime[i]["18:00"]] != '':
-#         pcp_total = pcp_number_in_cell[i]["18:00"]
-#     if pcp[datetime[i + 1]["06:00"]] != '':
-#         pcp_total = pcp_total + pcp_number_in_cell[i + 1]["06:00"]
 
 
 def parse_month(month):
