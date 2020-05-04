@@ -15,6 +15,7 @@ db_path = "./db2.sqlite"
 write_up_dir = "./test_write_up"
 irrad_file = "./forecast/Солнечная_радиация_станд_значения.csv"
 
+
 def append_from_db():
     # appends data from db to non till today files
     conn = sqlite3.connect(db_path)

@@ -3,7 +3,9 @@ import datetime as dt
 from collections import OrderedDict
 from DayRecord import DayRecord
 from pprint import pprint
+import datetime as dt
 import json_downloader
+
 
 city_ids = json.load(open("./city_ids.json", "r"))
 
@@ -116,7 +118,6 @@ def recount_pcp(pcp_data, get_params):
     return res
 
 
-
 def count_value(today_el, tomorrow_el, last_day_error=False):
     today_15 = None
     today_18 = None
@@ -127,6 +128,9 @@ def count_value(today_el, tomorrow_el, last_day_error=False):
     datetime_18 = "exist"
     datetime_03 = "exist"
     datetime_06 = "exist"
+    one_day = dt.timedelta(days=1)
+    # if (tomorrow_el[0][0].date() - today_el[0][0].date()) != one_day:
+    #     last_day_error = True
     for el in today_el:
         if el[0].hour == 15:
             today_15 = el[1]
@@ -137,7 +141,7 @@ def count_value(today_el, tomorrow_el, last_day_error=False):
     for el in today_el:
         if el[0].hour == 18:
             today_18 = el[1]
-            datetime_18 = "exist"
+            datetime_18 = 'exist'
             break
         else:
             datetime_18 = "absent"
@@ -146,14 +150,14 @@ def count_value(today_el, tomorrow_el, last_day_error=False):
         for el in tomorrow_el:
             if el[0].hour == 3:
                 tomorrow_03 = el[1]
-                datetime_03 = "exist"
+                datetime_03 = 'exist'
                 break
             else:
                 datetime_03 = "absent"
         for el in tomorrow_el:
             if el[0].hour == 6:
                 tomorrow_06 = el[1]
-                datetime_06 = "exist"
+                datetime_06 = 'exist'
                 break
             else:
                 datetime_06 = "absent"
@@ -168,16 +172,17 @@ def count_value(today_el, tomorrow_el, last_day_error=False):
         pcp_total += today_15
     if tomorrow_03 is not None:
         pcp_total += tomorrow_03
+    elif today_15 is not None and datetime_03 != "absent":
+        return pcp_total
     else:
         if today_18 is not None:
-            pcp_total += today_18
-        if tomorrow_06 is not None:
-            if tomorrow_15 is None:
-                pcp_total += tomorrow_06
-            elif datetime_03 == "absent":
-                pcp_total += 0.75 * tomorrow_06
-            elif today_18 is None and tomorrow_06 is None:
-                pcp_total = None
+            pcp_total = today_18
+        if tomorrow_06 is not None and tomorrow_15 is None:
+            pcp_total += tomorrow_06
+        elif tomorrow_06 is not None and datetime_03 == "absent":
+            pcp_total += 0.75 * tomorrow_06
+        # else:
+            # pcp_total = None
     return pcp_total
 
 
