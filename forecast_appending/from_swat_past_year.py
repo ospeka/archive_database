@@ -13,23 +13,24 @@ import shutil
 
 import from_past_year
 
-res_dir = './from_swat_past_year_test'
+year_to_append = 2020
+curr_year = 2021
+res_dir = f'./scenario_{year_to_append}'
 swat_files_dir = '../test_write_up'
-year_to_append = 2019
-curr_year = 2020
+
 
 
 def main():
     files = from_past_year.get_files(swat_files_dir)
     pprint(files)
-    end_date = datetime.date(year=2021, month=1, day=1)
+    end_date = datetime.date(year=curr_year + 1, month=1, day=1)
     today = datetime.date.today()
     days_to_copy = (end_date - today).days
     print(days_to_copy)
     date_to_find = datetime.date(year=year_to_append, month=today.month, day=today.day)
     jan_first = datetime.date(year=date_to_find.year, month=1, day=1)
-    day_number = (date_to_find - jan_first).days + 1
-    date_to_find_str = str(date_to_find.year) + str(day_number)
+    day_number = (date_to_find - jan_first).days
+    date_to_find_str = str(date_to_find.year) + f"{day_number:03}"
     print(date_to_find_str)
     for file in files:
         append_from_swat_file(files[file], date_to_find_str, days_to_copy)

@@ -7,7 +7,7 @@ import datetime as dt
 import json_downloader
 
 
-city_ids = json.load(open("./city_ids.json", "r"))
+city_ids = json.load(open("./sula_ids.json", "r"))
 
 
 def get_city_data(get_params, path="./downloaded_data/SpasDemensk.json"):
@@ -91,7 +91,7 @@ def recount_pcp(pcp_data, get_params):
     dates_table, data_table = json_downloader.get_table(get_params)
     data = json_downloader.parse_table(dates_table, data_table)
     data['date'].append({'year': get_params["ayear"]})
-    # data['year'] = str(2015)
+    data['year'] = str(2015)
     data_list.append(data)
     next_day_pcp = data_list[1]['R']
     next_day_dates = data_list[1]['date'][:-1]
@@ -128,6 +128,7 @@ def count_value(today_el, tomorrow_el, last_day_error=False):
     datetime_18 = "exist"
     datetime_03 = "exist"
     datetime_06 = "exist"
+    one_day = dt.timedelta(days=1)
     # if (tomorrow_el[0][0].date() - today_el[0][0].date()) != one_day:
     #     last_day_error = True
     for el in today_el:
@@ -186,7 +187,7 @@ def count_value(today_el, tomorrow_el, last_day_error=False):
 
 
 def parse_month(month):
-    num_of_recs_by_day = num_of_records_by_day(month)
+    num_of_recs_by_day = num_of_records_by_day2(month)
     i = 0
     month_records = []
     for key in num_of_recs_by_day.keys():
@@ -214,6 +215,29 @@ def num_of_records_by_day(month):
             if key.day == key2.day:
                 res[day] += 1
     return res
+
+def num_of_records_by_day2(month):
+    year = month['year']
+    month['date'] = month['date'][0:-1]
+    num_of_recs_by_day = {}
+    for date_str in month['date']:
+        try:
+            date = dt.datetime.strptime(date_str + " " + year, '%H %d.%m %Y')
+        except ValueError:
+            continue
+        if date not in num_of_recs_by_day:
+            num_of_recs_by_day[date] = 1
+        else:
+            num_of_recs_by_day[date] += 1
+    res = OrderedDict()
+    for key in num_of_recs_by_day:
+        day = key.replace(hour=0)
+        res[day] = 0
+        for key2 in num_of_recs_by_day:
+            if key.date() == key2.date():
+                res[day] += num_of_recs_by_day[key2]
+    return res
+
 
 
 if __name__ == '__main__':

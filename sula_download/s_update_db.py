@@ -3,10 +3,11 @@ import sqlite3
 import datetime as dt
 import dateutil.parser as dp
 from dateutil.relativedelta import relativedelta
-from json_downloader import get_table, parse_table
 import json
-from json_parser import get_city_data
 import os
+
+from s_json_downloader import get_table, parse_table
+from s_json_parser import get_city_data
 
 get_params = {
     "id": "26898",
@@ -18,37 +19,20 @@ get_params = {
 }
 
 cities = [
-    "Bryansk",
-    "Dmitrovsk",
-    "Elnya",
-    "Fatezh",
-    "Karachaev",
-    "Kurchatov",
-    "Kursk",
-    "Navlya",
-    "Oboyan",
-    "Poniri",
-    "Rilsk",
-    "SpasDemensk",
-    "Tim",
-    "Trubchevsk",
-    "Unecha",
-    "Zhizdra",
-    "Zhukovka",
-    "Chernigiv",
-    "Druzhba",
-    "Gluchiv",
+    "Veselyy_Podil",
+    "Hadyach",
+    "Zolotonosha",
     "Konotop",
-    "Nizhin",
-    "Oster",
-    "Pokoshichi",
-    "Semenivka",
-    "Shchors",
-    "Sumi",
-    "Vishgorod"
+    "Lebedyn",
+    "Lubny",
+    "Nizhyn",
+    "Pryluky",
+    "Romny",
+    "Sumy",
+    "Yahotyn"
 ]
-db_path = "./db2.sqlite"
-city_ids_path = "./city_ids.json"
+db_path = "./sula_db.sqlite"
+city_ids_path = "./sula_ids.json"
 update_data_dir = "./update_data/"
 
 def main():
@@ -58,7 +42,7 @@ def main():
 def update_db(db_path, city_ids_path, update_data_dir):
     con = sqlite3.connect(db_path)
     cursor = con.cursor()
-    at_least_one_update_done = False
+    at_least_one_uppdate_done = False
     for city in cities:
         path = download_data(city, cursor, city_ids_path, update_data_dir)
         if path is None:
@@ -71,10 +55,10 @@ def update_db(db_path, city_ids_path, update_data_dir):
         else:
             print("Error: %s file not found" % path)
         insert_update(city_data, city_name, cursor)
-        at_least_one_update_done = True
+        at_least_one_uppdate_done = True
     con.commit()
     con.close()
-    return at_least_one_update_done
+    return at_least_one_uppdate_done
 
 
 def insert_update(data, city_name, cursor):
@@ -99,7 +83,7 @@ def download_data(city, cursor, city_ids_path, update_data_dir):
         """.format(city)).fetchall()[0][0]
     start_date = dp.parse(max_date)
     one_day = relativedelta(days=1)
-    end_date = dt.date.today() - one_day
+    end_date = dt.date.today()
     curr_date = start_date
     data_list = []
     city_ids = json.load(open(city_ids_path, "r"))

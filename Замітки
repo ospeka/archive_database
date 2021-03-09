@@ -76,6 +76,14 @@ pop: Probability of Precipitation (%).
 DELETE FROM Zhukovka
 WHERE dt BETWEEN "2015-01-01 00:00:00" AND "2020-05-04 00:00:00"
 
+SELECT
+    name, email, COUNT(*)
+FROM
+    users
+GROUP BY
+    name, email
+HAVING
+    COUNT(*) > 1
 
 
 

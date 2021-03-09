@@ -7,5 +7,11 @@
       <jdbc-driver>org.sqlite.JDBC</jdbc-driver>
       <jdbc-url>jdbc:sqlite:D:\Projects\desna_archive_2020\db2020.sqlite</jdbc-url>
     </data-source>
+    <data-source source="LOCAL" name="db2" uuid="85c44820-5de7-490f-b465-d1c898a7d39f">
+      <driver-ref>sqlite.xerial</driver-ref>
+      <synchronize>true</synchronize>
+      <jdbc-driver>org.sqlite.JDBC</jdbc-driver>
+      <jdbc-url>jdbc:sqlite:D:\Projects\desna_archive_2020\db2.sqlite</jdbc-url>
+    </data-source>
   </component>
 </project>

@@ -8,10 +8,14 @@
       <w>mcolors</w>
       <w>mycmp</w>
       <w>pathes</w>
+      <w>pcps</w>
+      <w>podol</w>
+      <w>pogodaklimat</w>
       <w>shchors</w>
       <w>tmax</w>
       <w>tmin</w>
       <w>translit</w>
+      <w>veselyiy</w>
     </words>
   </dictionary>
 </component>

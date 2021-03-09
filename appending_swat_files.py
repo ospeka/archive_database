@@ -147,7 +147,7 @@ def write_up_pcp(pcp_data, pcp_file):
     for day_data in pcp_data:
         date = dt_parser.parse(day_data[0])
         year = date.year
-        first_jan = datetime(int(date.year), 1, 1)
+        first_jan = datetime(year=int(date.year), month=1, day=1)
         delta = date - first_jan
         file.write("{}{:03}".format(year, delta.days + 1))
         for record in day_data[1:]:
@@ -164,9 +164,7 @@ def get_data_to_append(start_date, cursor, tables, stations):
             WHERE dt >= (?)
             ORDER BY dt
         """.format(st), (start_date,)).fetchall()
-        st_data = {}
-        st_data['name'] = st
-        st_data['data'] = res
+        st_data = {'name': st, 'data': res}
         data.append(st_data)
     return data
 

@@ -5,8 +5,8 @@ import sqlite3
 from pprint import pprint
 import json
 
-st_distances_path = "./station_distances.json"
-db_path = "../db2.sqlite"
+st_distances_path = "./s_station_distances.json"
+db_path = "../sula_db.sqlite"
 
 
 def main():
@@ -44,7 +44,7 @@ def get_data_to_fill(st_name, date, st_distances, cursor):
     print(st_name)
     print(date)
     res = None
-    while i < 28:
+    while i < 11:
         print(i)
         try:
             nearest_st = find_nearest_st(st_name, st_distances, i=i)

@@ -4,8 +4,8 @@ from pprint import pprint
 from dateutil.relativedelta import relativedelta
 import json
 
-db_path = './db2.sqlite'
-dist_path = './station_distances.json'
+db_path = './sula_db.sqlite'
+dist_path = './s_station_distances.json'
 start_date = datetime(year=2015, month=1, day=1)
 end_date = datetime.now()
 end_date = datetime(year=end_date.year, month=end_date.month, day=end_date.day)
@@ -13,7 +13,7 @@ end_date = datetime(year=end_date.year, month=end_date.month, day=end_date.day)
 
 def main():
     # upd db before filling!!!
-    con = sqlite3.connect(db_path, detect_types=sqlite3.PARSE_DECLTYPES | sqlite3.PARSE_COLNAMES)
+    con = sqlite3.connect(db_path, detect_types=sqlite3.PARSE_DECLTYPES|sqlite3.PARSE_COLNAMES)
     cursor = con.cursor()
     days_num = (end_date - start_date).days
     res = cursor.execute("""
@@ -23,12 +23,11 @@ def main():
         """).fetchall()
     table_names = [el[0] for el in res]
     st_to_upd = select_st_to_upd(cursor, days_num, table_names)
-    # pprint(st_to_upd)
     st_distances = json.load(open(dist_path, mode='r'))
     for st in st_to_upd:
         fill_gaps(cursor, st, st_distances)
-    # con.commit()
-    # con.close()
+    con.commit()
+    con.close()
 
 
 def fill_gaps(cursor, st, st_distances):
@@ -44,9 +43,10 @@ def fill_gaps(cursor, st, st_distances):
         if not res:
             gap_days.append(curr_date)
         curr_date += one_day
-    print(st, gap_days)
     data_to_fill = None
+    print(st)
     for gap_day in gap_days:
+        print(gap_day)
         data_to_fill = get_data_to_fill(st, cursor, gap_day, st_distances)
         # remove id from request result this stupid way)
         data_to_fill = [el for el in data_to_fill[0][1:]]

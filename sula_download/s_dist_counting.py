@@ -1,7 +1,7 @@
-import geopy.distance as gp
+from geopy import distance
 import json
 
-coors_path = "./station_coors.txt"
+coors_path = "./s_station_coors.txt"
 
 
 def main():
@@ -11,8 +11,8 @@ def main():
         splited = line.split()
         st = {}
         st['name'] = splited[0]
-        st['lon'] = splited[1]
-        st['lat'] = splited[2]
+        st['lon'] = splited[2]
+        st['lat'] = splited[1]
         stations.append(st)
     st_data = {}
     for st1 in stations:
@@ -20,9 +20,10 @@ def main():
         for st2 in stations:
             c1 = (float(st1['lon']), float(st1['lat']))
             c2 = (float(st2['lon']), float(st2['lat']))
-            distance = round(gp.vincenty(c1, c2).km, 2)
-            if distance != 0:
-                st_data[st1['name']][st2['name']] = distance
+            # distance = round(gp.vincenty(c1, c2).km, 2)
+            d = distance.distance(c1, c2).km
+            if d != 0:
+                st_data[st1['name']][st2['name']] = d
     with open("./s_station_distances.json", 'w+') as fout:
         json.dump(st_data, fout)
 
